@@ -1,0 +1,39 @@
+document.querySelectorAll(".square").forEach(ele => {
+    ele.addEventListener("click", (e) => {
+        if (!selectedPiece) return;
+        if (e.target == selectedPiece) return;
+        else {
+            var remove;
+            ele.childNodes.forEach(ele => {
+                if (ele.classList.contains("piece") && ele != selectedPiece) {
+                    if (ele.classList.contains("piece-black") && selectedPiece.classList.contains("piece-black")) return remove = true;
+                    if (ele.classList.contains("piece-white") && selectedPiece.classList.contains("piece-white")) return remove = true;
+
+                    if (ele.classList.contains("piece-black") && selectedPiece.classList.contains("piece-white")) {
+                        console.log("Requesting play playload of /sounds/place" + playIndex + ".wav (playIndex " + playIndex + ")")
+                        const audio = new Audio(`/sounds/take.wav`);
+                        audio.play();
+                    }
+
+                    if (ele.classList.contains("piece-white") && selectedPiece.classList.contains("piece-black")) {
+                        console.log("Requesting play playload of /sounds/place" + playIndex + ".wav (playIndex " + playIndex + ")")
+                        const audio = new Audio(`/sounds/take.wav`);
+                        audio.play();
+                    }
+
+                    ele.remove();
+                }
+            })
+            if (!remove) ele.appendChild(selectedPiece)
+            selectedPiece = null;
+            document.querySelectorAll(".piece").forEach(ele => ele.classList.remove("selected"))
+
+            if (!remove) {
+                const playIndex = (Math.random() * (7 - 1) + 1).toFixed();
+                console.log("Requesting play playload of /sounds/place" + playIndex + ".wav (playIndex " + playIndex + ")")
+                const audio = new Audio(`/sounds/place${playIndex}.wav`);
+                audio.play();
+            }
+        }
+    })
+}, false)

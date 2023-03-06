@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chess</title>
+    <link rel="stylesheet" href="styles/queue.css">
+</head>
+
+<body>
+    <div class="container">
+        <div>
+            <h1>Play Chess</h1>
+            <p id="pc-username">
+
+            </p>
+            <button id="join-queue-btn">Join Queue</button>
+            <br><br>
+            <span id="queue-amt"></span>
+        </div>
+    </div>
+
+    <div id="loading-screen">
+        <img src="images/pawn-black.png" alt="Loading">
+        <div class="loading-text">Loading, please wait...</div>
+    </div>
+
+    <span id="uuid"></span>
+    <span id="reset">Reset</span>
+
+    <script src="scripts/forge.min.js"></script>
+    <script src="scripts/socket.js"></script>
+    <script src="scripts/queue.js"></script>
+</body>
+
+</html>

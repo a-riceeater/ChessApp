@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chess</title>
+    <link rel="stylesheet" href="/styles/chess.css">
+</head>
+
+<body>
+    <div class="chessboard">
+        <div class="row">
+            <div class="square white"><img src="../images/rook-black.png" id="r1" class="piece"></div>
+            <div class="square wood-brown"><img src="../images/knight-black.png" id="n1" class="piece"></div>
+            <div class="square white"><img src="../images/bishop-black.png" id="b1" class="piece"></div>
+            <div class="square wood-brown"><img src="../images/king-black.png" id="k" class="piece"></div>
+            <div class="square white"><img src="../images/queen-black.png" id="q" class="piece"></div>
+            <div class="square wood-brown"><img src="../images/bishop-black.png" id="b2" class="piece"></div>
+            <div class="square white"><img src="../images/knight-black.png" id="n2" class="piece"></div>
+            <div class="square wood-brown"><img src="../images/rook-black.png" id="r2" class="piece"></div>
+        </div>
+        <div class="row">
+            <div class="square wood-brown"><img src="../images/pawn-black.png" id="p1" class="piece"></div>
+            <div class="square white"><img src="../images/pawn-black.png" id="p2" class="piece"></div>
+            <div class="square wood-brown"><img src="../images/pawn-black.png" id="p3" class="piece"></div>
+            <div class="square white"><img src="../images/pawn-black.png" id="p4" class="piece"></div>
+            <div class="square wood-brown"><img src="../images/pawn-black.png" id="p5" class="piece"></div>
+            <div class="square white"><img src="../images/pawn-black.png" id="p6" class="piece"></div>
+            <div class="square wood-brown"><img src="../images/pawn-black.png" id="p7" class="piece"></div>
+            <div class="square white"><img src="../images/pawn-black.png" id="p8" class="piece"></div>
+        </div>
+        
+        <div class="row">
+            <div class="square white"></div>
+            <div class="square wood-brown"></div>
+            <div class="square white"></div>
+            <div class="square wood-brown"></div>
+            <div class="square white"></div>
+            <div class="square wood-brown"></div>
+            <div class="square white"></div>
+            <div class="square wood-brown"></div>
+        </div>
+        <div class="row">
+            <div class="square wood-brown"></div>
+            <div class="square white"></div>
+            <div class="square wood-brown"></div>
+            <div class="square white"></div>
+            <div class="square wood-brown"></div>
+            <div class="square white"></div>
+            <div class="square wood-brown"></div>
+            <div class="square white"></div>
+        </div>
+        <div class="row">
+            <div class="square wood-brown"></div>
+            <div class="square white"></div>
+            <div class="square wood-brown"></div>
+            <div class="square white"></div>
+            <div class="square wood-brown"></div>
+            <div class="square white"></div>
+            <div class="square wood-brown"></div>
+            <div class="square white"></div>
+        </div>
+        <div class="row">
+            <div class="square wood-brown"></div>
+            <div class="square white"></div>
+            <div class="square wood-brown"></div>
+            <div class="square white"></div>
+            <div class="square wood-brown"></div>
+            <div class="square white"></div>
+            <div class="square wood-brown"></div>
+            <div class="square white"></div>
+        </div>
+        
+        <div class="row">
+            <div class="square wood-brown"><img src="../images/pawn-white.png" class="piece" id="P1"></div>
+            <div class="square white"><img src="../images/pawn-white.png" class="piece" id="P2"></div>
+            <div class="square wood-brown"><img src="../images/pawn-white.png" class="piece" id="P3"></div>
+            <div class="square white"><img src="../images/pawn-white.png" class="piece" id="P4"></div>
+            <div class="square wood-brown"><img src="../images/pawn-white.png" class="piece" id="P5"></div>
+            <div class="square white"><img src="../images/pawn-white.png" class="piece" id="P6"></div>
+            <div class="square wood-brown"><img src="../images/pawn-white.png" class="piece" id="P7"></div>
+            <div class="square white"><img src="../images/pawn-white.png" class="piece" id="P8"></div>
+        </div>
+        <div class="row">
+            <div class="square white"><img src="../images/rook-white.png" class="piece" id="R1"></div>
+            <div class="square wood-brown"><img src="../images/knight-white.png" class="piece" id="N1"></div>
+            <div class="square white"><img src="../images/bishop-white.png" class="piece" id="B1"></div>
+            <div class="square wood-brown"><img src="../images/king-white.png" class="piece" id="K"></div>
+            <div class="square white"><img src="../images/queen-white.png" class="piece" id="Q"></div>
+            <div class="square wood-brown"><img src="../images/bishop-white.png" class="piece" id="B2"></div>
+            <div class="square white"><img src="../images/knight-white.png" class="piece" id="N2"></div>
+            <div class="square wood-brown"><img src="../images/rook-white.png" class="piece" id="R2"></div>
+        </div>
+        
+
+    </div>
+
+
+    <div class="info">
+        <h1 id="opponent-title">Opponent:</h1>
+        <p id="opponent-name" style="color: rgb(207, 207, 207)">Fetching opponent name...</p>
+        <h1 id="game-turn">Turn</h1>
+        <p id="gt-value" style="color: rgb(207, 207, 207)">Fetching game turn...</p>
+        <h1 id="game-color">Color: </h1>
+        <p id="gc-value" style="color: rgb(207, 207, 207)">Fetching game color...</p>
+    </div>
+
+    <div id="loading-screen">
+        <img src="../images/pawn-black.png" id\="Loading">
+        <div class="loading-text">
+            Loading, please wait...
+        </div>
+    </div>
+
+    <span id="uuid"></span>
+    <script src="../scripts/forge.min.js"></script>
+    <script src="../scripts/socket.js"></script>
+    <script src="../scripts/chess.js"></script>
+    <script src="../scripts/socket-handler.js"></script>
+</body>
+
+</html>

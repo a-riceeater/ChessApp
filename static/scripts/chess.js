@@ -1,0 +1,148 @@
+var selectedPiece, match, opponent, color;
+
+const chessboardRows = document.querySelectorAll('.row');
+
+// Array of characters representing the columns on the chessboard
+const columns = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
+
+// Loop through each row
+for (let i = 0; i < chessboardRows.length; i++) {
+    const squares = chessboardRows[i].querySelectorAll('.square');
+
+    // Loop through each square in the row
+    for (let j = 0; j < squares.length; j++) {
+        const column = columns[j];
+        const row = 8 - i;
+        const id = column + row;
+
+        // Set the id of the square to its location on the chessboard
+        squares[j].setAttribute('id', id);
+    }
+}
+
+const username = localStorage.getItem("username")
+var usernameNoId;
+if (username) usernameNoId = localStorage.getItem("username").replace("." + username.split(".")[1], "")
+if (!username) window.location = '/ '
+
+_("#uuid").iText(username.split(".")[1])
+
+setTimeout(() => {
+    _(".loading-text").innerHTML = `<p>Connecting to room...</p>`
+    postData('/app-api/connect', { user: usernameNoId, room: document.URL.split("play/")[1] })
+        .then((data) => {
+            console.dir(data);
+            if (!data.joined) return window.location = '/'
+            match = data.match;
+
+            for (let i = 0; i < match.players.length; i++) {
+                if (match.players[i] == usernameNoId) continue;
+                opponent = match.players[i];
+            }
+
+            _("#opponent-name").iText(opponent);
+            _("#gt-value").iText(match.turn)
+
+            if (match.white == usernameNoId) { _("#gc-value").iText("White"); color = "white" }
+            if (match.black == usernameNoId) { _("#gc-value").iText("Black"); color = "black" }
+
+            setTimeout(() => _(".loading-text").innerHTML = `<p>Connected to room...</p>`, 300)
+        })
+}, 500)
+
+setTimeout(() => _(".loading-text").innerHTML = `<p>Establishing Functions...</p>`, 1000)
+document.querySelectorAll(".piece").forEach(ele => {
+    ele.addEventListener("click", (e) => {
+
+
+        if (!selectedPiece && !ele.getAttribute("src").includes(color)) return;
+        if (selectedPiece && !ele.getAttribute("src").includes("color")) {
+            postData('/app-api/move', { user: usernameNoId, room: document.URL.split("play/")[1], moveTo: ele.parentNode.id, moving: selectedPiece.id })
+            .then((data) => {
+                console.dir(data);
+                if (!data.moved) return;
+                selectedPiece.classList.remove("selected")
+                selectedPiece = null;
+            })
+            return;
+        }
+
+        _(".piece", true).forEach(ele2 => {
+            if (ele != ele2) ele2.classList.remove("selected")
+        })
+
+        selectedPiece = ele;
+        ele.classList.toggle("selected");
+
+        if (match.turn != usernameNoId) return;
+        if (ele == selectedPiece) return;
+
+        console.log(selectedPiece.getAttribute("src"), ele.getAttribute("src"))
+
+        // Checks if clicking on own piece
+        if (selectedPiece.getAttribute("src").includes("black") && ele.getAttribute("src").includes("black")) { _(".piece", true).forEach(ele2 => ele2.classList.remove("selected")); selectedPiece = null; return; }
+        if (selectedPiece.getAttribute("src").includes("white") && ele.getAttribute("src").includes("white")) { _(".piece", true).forEach(ele2 => ele2.classList.remove("selected")); selectedPiece = null; return; }
+
+        postData('/app-api/move', { user: usernameNoId, room: document.URL.split("play/")[1], moveTo: ele.id, moving: selectedPiece.id })
+            .then((data) => {
+                console.dir(data);
+                if (!data.moved) return;
+                selectedPiece.classList.remove("selected")
+                selectedPiece = null;
+            })
+    })
+})
+
+document.querySelectorAll(".square").forEach(ele => {
+    ele.addEventListener("click", (e) => {
+        if (!selectedPiece) return;
+        if (match.turn != usernameNoId) return;
+        if (selectedPiece == ele) return;
+        if (e.target.classList.contains("piece")) return;
+
+
+        ele.childNodes.forEach(ele3 => {
+            if (!ele3) return;
+            if (ele3.classList.contains("piece")) {
+
+                // Checks if clicking on own piece
+                if (selectedPiece.getAttribute("src").includes("black") && ele3.getAttribute("src").includes("black")) { _(".piece", true).forEach(ele2 => ele2.classList.remove("selected")); selectedPiece = null; return; }
+                if (selectedPiece.getAttribute("src").includes("white") && ele3.getAttribute("src").includes("white")) { _(".piece", true).forEach(ele2 => ele2.classList.remove("selected")); selectedPiece = null; return; }
+            }
+        })
+
+
+
+
+        postData('/app-api/move', { user: usernameNoId, room: document.URL.split("play/")[1], moveTo: ele.id, moving: selectedPiece.id })
+            .then((data) => {
+                console.dir(data);
+                if (!data.moved) return;
+                selectedPiece.classList.remove("selected")
+                selectedPiece = null;
+            })
+        e.stopPropagation();
+    })
+})
+
+async function postData(url = '', body = {}) {
+    const response = await fetch(url, {
+        method: 'POST',
+        mode: 'cors',
+        credentials: 'same-origin',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(body)
+    })
+    return response.json();
+}
+
+window.addEventListener('beforeunload', (e) => {
+    return "Are you want to leave?";
+})
+
+setTimeout(() => {
+    _("#loading-screen").css("opacity", 0);
+    setTimeout(() => _("#loading-screen").hide(), 1000);
+}, getRand(1000, 5000))
