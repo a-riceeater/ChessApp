@@ -15,7 +15,7 @@ const io = new Server(server, { 'force new connection': true });
 // const favicon = require('serve-favicon');
 import rateLimit from 'express-rate-limit'
 //const helmet = require("helmet");
-const port = process.env.port;
+const port = process.env.portAbove;
 // const prompt = require('prompt-sync')({ sigint: true });
 import fs from "fs"
 import sqlite3 from "sqlite3"
@@ -151,7 +151,9 @@ app.post("/app-api/move", (req, res) => {
         match.turn = match.players[i]
     }
 
-    const move = req.body.moving.replace(/[0-9]/g, '') + req.body.moveTo
+    var move;
+    if ( req.body.moving.replace(/[0-9]/g, '').toUpperCase() == "P") move = req.body.moveTo
+    else move = req.body.moving.replace(/[0-9]/g, '') + req.body.moveTo
 
     try {
         console.log(match.board.ascii())
