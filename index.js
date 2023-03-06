@@ -151,7 +151,7 @@ app.post("/app-api/move", (req, res) => {
         match.turn = match.players[i]
     }
 
-    const move = req.body.moveTo
+    const move = req.body.moving.replace(/[0-9]/g, '') + req.body.moveTo
 
     try {
         console.log(match.board.ascii())
@@ -160,6 +160,7 @@ app.post("/app-api/move", (req, res) => {
     } catch (err) {
        console.error("invalid move! (" + move + ")")
        console.error(err);
+       return res.send({ moved: false })
     }
 
     console.log("IS CHECKMATE: " + match.board.isCheckmate())
