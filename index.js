@@ -159,7 +159,10 @@ app.post("/app-api/move", (req, res) => {
         console.log(match.board.ascii())
     } catch (err) {
        console.error("invalid move! (" + move + ")")
+       console.error(err);
     }
+
+    console.log("IS CHECKMATE: " + match.board.isCheckmate())
     
     io.to(room).emit("recieve-move", { moveTo: req.body.moveTo, moving: req.body.moving, match: match });
 
