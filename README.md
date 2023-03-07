@@ -9,3 +9,9 @@ Uses:
 1. Clone the github repository.
 2. Run the server using the command `node index.js`
 3. Visit the page at localhost:80
+
+# To be added:
+- Ratings
+- Accounts
+- Login tokens
+- Device compatibility
