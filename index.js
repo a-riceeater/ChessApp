@@ -114,20 +114,20 @@ app.post("/app-api/join-queue", (req, res) => {
   res.send({ joined: true })
 
 
-    if (arrayLength(queueUsers) > 2) {
-      queueUsers = [];
-      return;
-    }
+  if (arrayLength(queueUsers) > 2) {
+    queueUsers = [];
+    return;
+  }
 
-    if (arrayLength(queueUsers) == 2) {
-      const id = createRandomId(26)
-      io.to("queue").emit("join_game", { gameId: id });
-      const match = new Match(id, queueUsers, queueUsers[0], queueUsers[1]);
-      matches.set(queueUsers, match)
-      matches.set(id, match);
-      queueUsers = [];
-    }
-    
+  if (arrayLength(queueUsers) == 2) {
+    const id = createRandomId(26)
+    io.to("queue").emit("join_game", { gameId: id });
+    const match = new Match(id, queueUsers, queueUsers[0], queueUsers[1]);
+    matches.set(queueUsers, match)
+    matches.set(id, match);
+    queueUsers = [];
+  }
+
 
   io.emit("update_queue", { amount: queueUsers.length });
 })
@@ -184,7 +184,7 @@ app.post("/app-api/move", (req, res) => {
     console.error("invalid move! (" + move + ")")
     moveStatus = false;
   }
-  finally {    
+  finally {
     var gameStatus = false;
 
     winHandler.isWin(match.board, (status, reason) => {
@@ -230,6 +230,13 @@ io.on("connection", (socket) => {
   })
 
   socket.on("disconnect", () => {
+    Object.getOwnPropertyNames(sockets).forEach((key) => {
+      if (sockets[key] == socket.id) {
+        if (playing.includes(key)) {
+          console.log("MATCH THAT " + key + " IS PLAYING IN HAS DISCONNECTED.")
+        }
+      }
+    })
     Object.values(sockets).forEach(function (key) {
       if (key == socket.id) {
         console.log("Removing " + key + " from socket array.")
