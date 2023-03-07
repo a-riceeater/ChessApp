@@ -1,7 +1,8 @@
 # ChessApp
 A simple NodeJS Multiplayer chess app.
 
-Uses:
+
+# Dependencies
 [Chess.js](https://github.com/jhlywa/chess.j)
 
 # Running
