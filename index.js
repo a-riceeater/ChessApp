@@ -82,6 +82,7 @@ class Match {
 var queueUsers = [];
 const sockets = [];
 const rooms = [];
+const playing = [];
 
 app.use(cors(corsOptions));
 app.use(express.static("static"))
@@ -149,6 +150,7 @@ app.post("/app-api/connect", (req, res) => {
 
     socket.join(room);
     rooms[user] = room;
+    playing.push(user);
 
     res.send({ joined: true, match: matches.get(room) })
   } catch (err) {
