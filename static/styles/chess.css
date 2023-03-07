@@ -81,8 +81,8 @@
     text-align: center;
     display: flex;
     flex-direction: column;
-    align-items: center; /* center horizontally */
-    justify-content: center; /* center vertically */
+    align-items: center;
+    justify-content: center;
 }
 
 .row {
