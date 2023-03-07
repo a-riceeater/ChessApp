@@ -148,6 +148,7 @@ app.post("/app-api/connect", (req, res) => {
   }
 })
 
+import winHandler from './server/winHandler.js'
 app.post("/app-api/move", (req, res) => {
   const user = req.body.user;
   const socket = io.sockets.sockets.get(sockets[user]);
@@ -175,6 +176,9 @@ app.post("/app-api/move", (req, res) => {
   }
   finally {
     console.log("IS CHECKMATE: " + match.board.isCheckmate())
+    winHandler.isWin(match.board, (status, reason) => {
+      console.log(status, reason)
+    })
 
     if (moveStatus) {
       for (let i = 0; i < match.players.length; i++) {
@@ -183,7 +187,7 @@ app.post("/app-api/move", (req, res) => {
       }
     }
 
-    if (moveStatus) io.to(room).emit("recieve-move", { moveTo: req.body.moveTo, moving: req.body.moving, match: match });
+    if (moveStatus) io.to(room).emit("recieve-move", { moveTo: req.body.moveTo, moving: req.body.moving, match: match, inCheck: match.board.inCheck() });
 
     res.send({ moved: moveStatus })
   }

@@ -21,3 +21,14 @@ socket.on("recieve-move", (data) => {  console.dir(document.getElementById(data.
   match = data.match;
   _("#gt-value").iText(match.turn)
 })
+
+// Game end because of checkmate
+socket.on("game-win", (data) => {
+  const winner = data.winner;
+  const reason = data.reason;
+})
+
+// Game end because of draw, stalemate, etc.
+socket.on("game-end", (data) => {
+  const drawReason = data.reason;
+})
