@@ -12,8 +12,8 @@ A simple NodeJS Multiplayer chess app.
 3. Visit the page at localhost:80
 
 # Errors that occur when running
-1. Error: listen EACCES: permission denied 0.0.0.0:80
-
+**1. Error: listen EACCES: permission denied 0.0.0.0:80
+**
   This error occurs when using port 80, but you do not have access.
   
   To fix this, navigate to line 18 at index.js.
@@ -23,8 +23,8 @@ A simple NodeJS Multiplayer chess app.
   This will change the port from 80 to 1024.
 
 
-2. Sqlite3 NPM Error
-   This error could occur when cloning the repository.
+**2. Sqlite3 NPM Error
+**   This error could occur when cloning the repository.
    If this happens, navigate to the terminal and execute the following commands.
    
    `npm remove sqlite3`
