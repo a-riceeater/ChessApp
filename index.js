@@ -7,6 +7,7 @@ import http from "http"
 import path from "path"
 import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
+
 const __dirname = path.dirname(__filename);
 import morgan from "morgan"
 const server = http.createServer(app);
@@ -15,7 +16,7 @@ const io = new Server(server, { 'force new connection': true });
 // const favicon = require('serve-favicon');
 import rateLimit from 'express-rate-limit'
 //const helmet = require("helmet"); Use this if you want sequirty response headers (may cause bugs with code)
-const port = process.env.portAbove; // Change this to proccess.env.portAbove if experiencing errors
+const port = process.env.port; // Change this to proccess.env.portAbove if experiencing errors
 // const prompt = require('prompt-sync')({ sigint: true });
 import fs from "fs"
 import sqlite3 from "sqlite3"
@@ -97,6 +98,14 @@ function rp(p) {
 
 app.get("/", (req, res) => {
   res.sendFile(rp("html/queue.html"))
+})
+
+app.get("/register", (req, res) => {
+  res.sendFile(rp("html/register.html"))
+})
+
+app.get("/login", (req, res) => {
+  res.sendFile(rp("html/login.html"))
 })
 
 app.get("/play", (req, res) => {
@@ -215,6 +224,12 @@ app.post("/app-api/move", (req, res) => {
 
 })
 
+// Register/login
+
+app.post("/app-api/register", (req, res) => {
+  
+})
+
 server.listen(port, () => {
   console.log("\x1b[33mServer Running!")
   console.log("\x1b[31mThis is a development server, do not use this for hosting!\n")
@@ -234,10 +249,12 @@ io.on("connection", (socket) => {
       if (sockets[key] == socket.id) {
         if (playing.includes(key)) {
           console.log("MATCH THAT " + key + " IS PLAYING IN HAS DISCONNECTED.")
+
+          // matches.remove()
         }
       }
     })
-    Object.values(sockets).forEach(function (key) {
+    Object.values(sockets).forEach(function(key) {
       if (key == socket.id) {
         console.log("Removing " + key + " from socket array.")
         delete sockets[key]

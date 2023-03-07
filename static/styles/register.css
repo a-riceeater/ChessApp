@@ -1,0 +1,45 @@
+@import url("https://fonts.googleapis.com/css2?family=Montserrat");
+
+:root {
+  --m: 'Montserrat', serif;
+}
+
+#container {
+  position: fixed;
+  transform: translate(-50%, -50%);
+  top: 50%;
+  left: 50%;
+  width: 50%;
+  height: 50%;
+  text-align: center;
+  font-family: var(--m);
+}
+
+input {
+  background-color: lightgray;
+  border: 1px solid lightgray;
+  font-family: var(--m);
+  height: 30px;
+  width: 280px;
+  padding-left: 5px;
+  outline: 0;
+}
+
+h1 {
+  color: black;
+}
+
+button {
+  cursor: pointer;
+  font-family: var(--m);
+  color: white;
+  font-weight: bold;
+  background-color: #88ac4c;
+  border: 1px solid #88ac4c;
+  border-bottom: 3px solid #475c26;
+  width: 285px;
+  height: 45px;
+  font-size: 16px;
+  border-radius: 3.5px;
+  overflow: hidden;
+}
