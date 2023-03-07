@@ -21,7 +21,7 @@
     height: 100vh;
     position: fixed;
     left: 15%;
-    top: 2%;
+    top: 8%;
 }
 
 .info {
@@ -43,8 +43,8 @@
 }
 
 .square {
-    width: 115px;
-    height: 115px;
+    width: 100px;
+    height: 100px;
     display: flex;
     justify-content: center;
     align-items: center;
