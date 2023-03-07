@@ -27,6 +27,7 @@ const corsOptions = {
   credentials: true
 };
 import { Chess } from 'chess.js'
+import tokenManager from './server/tokens'
 
 function arrayLength(array) {
   var a = 0;
