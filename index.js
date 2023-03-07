@@ -15,7 +15,7 @@ const io = new Server(server, { 'force new connection': true });
 // const favicon = require('serve-favicon');
 import rateLimit from 'express-rate-limit'
 //const helmet = require("helmet");
-const port = process.env.portAbove;
+const port = process.env.port;
 // const prompt = require('prompt-sync')({ sigint: true });
 import fs from "fs"
 import sqlite3 from "sqlite3"
@@ -26,6 +26,12 @@ const corsOptions = {
   credentials: true
 };
 import { Chess } from 'chess.js'
+
+
+const chess = new Chess();
+chess.move({ from: 'b2', to: 'b3', piece: 'p', color: 'white' }) // put a black pawn on a5
+console.log(chess.ascii());
+
 
 const apiLimiter = rateLimit({
   windowMs: 20000,
@@ -150,30 +156,36 @@ app.post("/app-api/move", (req, res) => {
 
   if (match.turn != user) return res.send({ moved: false })
 
-  for (let i = 0; i < match.players.length; i++) {
-    if (match.players[i] == user) continue;
-    match.turn = match.players[i]
-  }
+  console.log(`${match.turn} moving from ${req.body.from} to ${req.body.to}`)
 
-    var move;
-    if ( req.body.moving.replace(/[0-9]/g, '').toUpperCase() == "P") move = req.body.moveTo
-    else move = req.body.moving.replace(/[0-9]/g, '') + req.body.moveTo
+  var move;
+  // if ( req.body.moving.replace(/[0-9]/g, '').toUpperCase() == "P") move = req.body.moveTo
+  move = req.body.moving + req.body.moveTo
+  var moveStatus = false;
 
   try {
-    console.log(match.board.ascii())
-    match.board.move(move);
-    console.log(match.board.ascii())
+    console.log({ from: req.body.from, to: req.body.to, piece: req.body.moving.replace(/[0-9]/g, '').toLowerCase(), color: req.body.c })
+
+    match.board.move({ from: req.body.from, to: req.body.to, piece: req.body.moving.replace(/[0-9]/g, '').toLowerCase(), color: req.body.c }) // put a black pawn on a5
+
+    moveStatus = true;
   } catch (err) {
     console.error("invalid move! (" + move + ")")
-    console.error(err);
-    return res.send({ moved: false })
+    moveStatus = false;
   }
   finally {
-    console.log("IS CHECKMATE: " + match.board.isCheckmate(), "room:", room, "room amt:", io.sockets.adapter.rooms.get(room).size)
+    console.log("IS CHECKMATE: " + match.board.isCheckmate())
 
-    io.to(room).emit("recieve-move", { moveTo: req.body.moveTo, moving: req.body.moving, match: match });
+    if (moveStatus) {
+      for (let i = 0; i < match.players.length; i++) {
+        if (match.players[i] == user) continue;
+        match.turn = match.players[i]
+      }
+    }
 
-    res.send({ moved: true })
+    if (moveStatus) io.to(room).emit("recieve-move", { moveTo: req.body.moveTo, moving: req.body.moving, match: match });
+
+    res.send({ moved: moveStatus })
   }
 
 })
@@ -182,7 +194,7 @@ server.listen(port, () => {
   console.log("\x1b[33mServer Running!")
   console.log("\x1b[31mThis is a development server, do not use this for hosting!\n")
   console.log(`\x1b[0mRunning on:\nhttp://localhost:${port}\nhttps://chessapp.darthvader1925.repl.co`)
-})5
+})
 
 io.on("connection", (socket) => {
 
@@ -193,7 +205,7 @@ io.on("connection", (socket) => {
   })
 
   socket.on("disconnect", () => {
-    Object.values(sockets).forEach(function(key) {
+    Object.values(sockets).forEach(function (key) {
       if (key == socket.id) {
         console.log("Removing " + key + " from socket array.")
         delete sockets[key]

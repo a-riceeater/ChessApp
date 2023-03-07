@@ -69,10 +69,8 @@ document.querySelectorAll(".piece").forEach(ele => {
 
     if (!selectedPiece && !ele.getAttribute("src").includes(color)) return;
     if (selectedPiece && !ele.getAttribute("src").includes("color")) {
-      postData('/app-api/move', { user: usernameNoId, room: sessionStorage.getItem("gameId"), moveTo: ele.parentNode.id, moving: selectedPiece.id })
-        .then((data) => {
-          console.dir(data);
-          if (!data.moved) return;
+      postData('/app-api/move', { user: usernameNoId, room: sessionStorage.getItem("gameId"), moveTo: ele.id, moving: selectedPiece.id, c: color, to: ele.parentNode.id, from: selectedPiece.parentNode.id, to: ele.parentNode.id })
+      .then((data) => {
           selectedPiece.classList.remove("selected")
           selectedPiece = null;
         })
@@ -95,10 +93,10 @@ document.querySelectorAll(".piece").forEach(ele => {
     if (selectedPiece.getAttribute("src").includes("black") && ele.getAttribute("src").includes("black")) { _(".piece", true).forEach(ele2 => ele2.classList.remove("selected")); selectedPiece = null; return; }
     if (selectedPiece.getAttribute("src").includes("white") && ele.getAttribute("src").includes("white")) { _(".piece", true).forEach(ele2 => ele2.classList.remove("selected")); selectedPiece = null; return; }
 
-    postData('/app-api/move', { user: usernameNoId, room: sessionStorage.getItem("gameId"), moveTo: ele.id, moving: selectedPiece.id })
-      .then((data) => {
-        console.dir(data);
-        if (!data.moved) return;
+    console.log(color)
+
+    postData('/app-api/move', { user: usernameNoId, room: sessionStorage.getItem("gameId"), moveTo: ele.id, moving: selectedPiece.id, c: color, to: ele.id, from: selectedPiece.parentNode.id, to: ele.parentNode.id })
+    .then((data) => {
         selectedPiece.classList.remove("selected")
         selectedPiece = null;
       })
@@ -123,10 +121,8 @@ document.querySelectorAll(".square").forEach(ele => {
       }
     })
 
-
-
-
-    postData('/app-api/move', { user: usernameNoId, room: sessionStorage.getItem("gameId"), moveTo: ele.id, moving: selectedPiece.id })
+    console.log(color, selectedPiece.parentNode.id, ele.id)
+    postData('/app-api/move', { user: usernameNoId, room: sessionStorage.getItem("gameId"), moveTo: ele.id, moving: selectedPiece.id, c: color, to: ele.id, from: selectedPiece.parentNode.id, to: ele.id })
       .then((data) => {
         console.dir(data);
         if (!data.moved) return;
