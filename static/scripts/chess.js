@@ -34,7 +34,7 @@ try {
         .then((data) => {
           console.dir(data);
           if (!data.joined) {
-            
+
             document.body.innerHTML = `
             <div style="position: fixed; transform: translate(-50%, -50%); top: 60%; left: 50%; width: 50%; height: 50%; font-family: var(--m); text-align: center;">
             <img src="../images/pawn-black.png"> 
@@ -53,9 +53,15 @@ try {
             }
 
             _("#opponent-name").iText(opponent);
-            
-            if (color == "white") _("#user-black-name").iText(opponent)
-            else _("#user-white-name").iText(opponent)
+
+            if (color == "white") {
+              _("#user-white-name").iText(usernameNoId)
+              _("#user-black-name").iText(opponent)
+            }
+            else {
+              _("#user-black-name").iText(usernameNoId)
+               _("#user-white-name").iText(opponent)
+            }
 
             _("#gt-value").iText(match.turn)
 
