@@ -14,8 +14,8 @@ import { Server } from "socket.io";
 const io = new Server(server, { 'force new connection': true });
 // const favicon = require('serve-favicon');
 import rateLimit from 'express-rate-limit'
-//const helmet = require("helmet");
-const port = process.env.port;
+//const helmet = require("helmet"); Use this if you want sequirty response headers (may cause bugs with code)
+const port = process.env.port; // Change this to proccess.env.portAbove if experiencing errors
 // const prompt = require('prompt-sync')({ sigint: true });
 import fs from "fs"
 import sqlite3 from "sqlite3"
@@ -86,8 +86,9 @@ const rooms = [];
 app.use(cors(corsOptions));
 app.use(express.static("static"))
 app.set('socketio', io);
-// app.use(morgan(':method :url :status :res[content-length] :response-time ms'))
+// app.use(morgan(':method :url :status :res[content-length] :response-time ms')) Use this if you want to see post and get logging information
 app.use(express.json())
+// app.use(helmet()) Use this if you want sequirty response headers (may cause bugs with code)
 
 function rp(p) {
   return path.join(__dirname, p);
@@ -215,7 +216,7 @@ app.post("/app-api/move", (req, res) => {
 server.listen(port, () => {
   console.log("\x1b[33mServer Running!")
   console.log("\x1b[31mThis is a development server, do not use this for hosting!\n")
-  console.log(`\x1b[0mRunning on:\nhttp://localhost:${port}\nhttps://chessapp.darthvader1925.repl.co`)
+  console.log(`\x1b[0mRunning on:\nhttp://localhost:${port}\nhttps://chessapp.darthvader1925.repl.co (Public Host)`)
 })
 
 io.on("connection", (socket) => {
