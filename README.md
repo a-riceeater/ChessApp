@@ -23,8 +23,9 @@ A simple NodeJS Multiplayer chess app.
   This will change the port from 80 to 1024.
 
 
-**2. Sqlite3 NPM Error**   This error could occur when cloning the repository.
-   If this happens, navigate to the terminal and execute the following commands.
+**2. Sqlite3 NPM Error** 
+This error could occur when cloning the repository.
+If this happens, navigate to the terminal and execute the following commands.
    
    `npm remove sqlite3`
    
