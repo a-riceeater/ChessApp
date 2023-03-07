@@ -15,7 +15,7 @@ const io = new Server(server, { 'force new connection': true });
 // const favicon = require('serve-favicon');
 import rateLimit from 'express-rate-limit'
 //const helmet = require("helmet"); Use this if you want sequirty response headers (may cause bugs with code)
-const port = process.env.port; // Change this to proccess.env.portAbove if experiencing errors
+const port = process.env.portAbove; // Change this to proccess.env.portAbove if experiencing errors
 // const prompt = require('prompt-sync')({ sigint: true });
 import fs from "fs"
 import sqlite3 from "sqlite3"

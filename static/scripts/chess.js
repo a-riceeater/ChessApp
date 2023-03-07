@@ -34,7 +34,7 @@ try {
         .then((data) => {
           console.dir(data);
           if (!data.joined) {
-
+/*
             document.body.innerHTML = `
             <div style="position: fixed; transform: translate(-50%, -50%); top: 60%; left: 50%; width: 50%; height: 50%; font-family: var(--m); text-align: center;">
             <img src="../images/pawn-black.png"> 
@@ -42,7 +42,7 @@ try {
             <p>You tried to join a game that doesn't exist...</p>
             <p><a href="/" style="color: blue; text-decoration: none;">Return Home</a></p>
             </div>
-            `
+            `*/
             return
           } else {
             match = data.match;
