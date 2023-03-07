@@ -1,9 +1,13 @@
 import sqlite3 from 'sqlite3'
 sqlite3.verbose()
 import path from 'path'
+import { fileURLToPath } from 'url';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 const tokenDb = new sqlite3.Database(path.join(__dirname, '../database/tokenDb.db'), sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE);
 
 tokenDb.run(`CREATE TABLE IF NOT EXISTS tokens(token TEXT NOT NULL, username TEXT NOT NULL)`)
+
 export default {
   createToken: function(username) {
     const token = this.createRandomId(26);
@@ -27,16 +31,16 @@ export default {
     }
     return result;
   },
-  verifyToken: function(token, res, next) {
+  verifyToken: function(token, callback) {
     tokenDb.get(`SELECT * FROM tokens WHERE token = ?`, [token], (err, row) => {
       if (err) {
         console.error(err);
         tokenDb.close();
       }
-      if (row == null) return res.redirect("/")
+      if (row == null) return callback(false)
       res.user = row.username;
       res.token = token;
-      next()
+      return callback(true);
     })
   },
   deleteToken: function(token, callback) {

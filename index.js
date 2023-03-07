@@ -27,7 +27,7 @@ const corsOptions = {
   credentials: true
 };
 import { Chess } from 'chess.js'
-import tokenManager from './server/tokens'
+import tokenManager from './server/tokens.js'
 
 function arrayLength(array) {
   var a = 0;
@@ -50,21 +50,36 @@ const apiLimiter = rateLimit({
   }
 })
 
-function createRandomId(length = 0) {
-  if (!length) length = 26;
-  let result = '';
-  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz01234567891234567890';
-  const charactersLength = characters.length;
-  let counter = 0;
-  while (counter < length) {
-    var c = characters.charAt(Math.floor(Math.random() * charactersLength));
-    //if (is_numeric(c) && counter == 0) c = "a"
-    result += c;
-    counter += 1;
+function authenticateToken(req, res, next) {
+  if (!req.headers.cookie) return res.redirect("/register")
+  if (!req.headers.cookie.includes("token=")) return res.redirect("/register")
+  const token = req.headers.cookie.split("token=")[1];
+  if (!token) return res.redirect("/register")
+  else { 
+    tokenManager.verifyToken(token, (verified) => {
+      if (verified) next()
+      else {
+        res.clearCookie("token")
+        res.redirect("/register")
+      }
+    }) 
   }
-  return result;
 }
 
+function authAlready(req, res, next) {
+  if (!req.headers.cookie) return next()
+  if (!req.headers.cookie.includes("token=")) return next();
+  const token = req.headers.cookie.split("token=")[1];
+  if (!token) return next();
+  else {
+    tokenManager.verifyToken(token, (verified) => {
+      if (verified) {
+        res.redirect("/")
+      }
+      else return next();
+    }) 
+  }
+}
 
 app.use('/app-api/', apiLimiter)
 
@@ -97,15 +112,15 @@ function rp(p) {
   return path.join(__dirname, p);
 }
 
-app.get("/", (req, res) => {
+app.get("/", authenticateToken, (req, res) => {
   res.sendFile(rp("html/queue.html"))
 })
 
-app.get("/register", (req, res) => {
+app.get("/register", authAlready, (req, res) => {
   res.sendFile(rp("html/register.html"))
 })
 
-app.get("/login", (req, res) => {
+app.get("/login", authAlready, (req, res) => {
   res.sendFile(rp("html/login.html"))
 })
 
@@ -130,7 +145,7 @@ app.post("/app-api/join-queue", (req, res) => {
   }
 
   if (arrayLength(queueUsers) == 2) {
-    const id = createRandomId(26)
+    const id = tokenManager.createRandomId(26)
     io.to("queue").emit("join_game", { gameId: id });
     const match = new Match(id, queueUsers, queueUsers[0], queueUsers[1]);
     matches.set(queueUsers, match)
