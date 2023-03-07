@@ -22,6 +22,7 @@ A simple NodeJS Multiplayer chess app.
 2. Sqlite3 NPM Error
    This error could occur when cloning the repository.
    If this happens, navigate to the terminal and execute the following commands.
+   
    `npm remove sqlite3`
    
    
