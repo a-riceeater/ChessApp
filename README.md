@@ -16,7 +16,7 @@ A simple NodeJS Multiplayer chess app.
 
   This error occurs when using port 80, but you do not have access.
   
-  To fix this, navigate to line 18 at index.js.
+  To fix this, navigate to line 18 at `index.js`.
   
   Change the code from `const port = process.env.port` to `const port = process.env.portAbove`.
   
