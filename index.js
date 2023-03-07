@@ -175,9 +175,13 @@ app.post("/app-api/move", (req, res) => {
     moveStatus = false;
   }
   finally {
-    console.log("IS CHECKMATE: " + match.board.isCheckmate())
+    var gameEnded = false;
+    
     winHandler.isWin(match.board, (status, reason) => {
       console.log(status, reason)
+      gameEnded = status;
+      if (status == "checkmate") io.to(room).emit("game-win", { winner: match.turn, reason: reason });
+      else io.to(room).emit("game-end", { reason: reason, status: status })
     })
 
     if (moveStatus) {
