@@ -62,6 +62,7 @@ _("#join-queue-btn").addEventListener("click", (e) => {
     localStorage.setItem("username", value + "." + id)
     window.location = ''
   } else if (btn.innerText == "Join Queue") {
+    btn.innerText = "Loading..."
     postData('/app-api/join-queue', { user: usernameNoId })
       .then((data) => {
 
@@ -85,7 +86,7 @@ _("#join-queue-btn").addEventListener("click", (e) => {
         setTimeout(inc, 1000)
       })
   } else {
-
+    postData('/app-api/leave-queue')
   }
 })
 
@@ -99,7 +100,30 @@ async function postData(url = '', body = {}) {
     },
     body: JSON.stringify(body)
   })
+    .catch((err) => {
+      document.body.innerHTML = `
+        <div style="position: fixed; transform: translate(-50%, -50%); top: 60%; left: 50%; width: 50%; height: 50%; font-family: var(--m); text-align: center;">
+        <img src="images/pawn-black.png"> 
+        <h1>Whoops!</h1>
+        <p>An error occured.</p>
+        <p>Details: ${err}</p>
+        <p><a href="/" style="color: blue; text-decoration: none;">Reload</a></p>
+        </div>
+        `
+        document.body.style.background = "white";
+    })
   return response.json();
+}
+
+if (document.URL.includes("?")) {
+  if (document.URL.split("?")[1] == "q=1") {
+    setTimeout(() => _("#join-queue-btn").click(), 500);
+  }
+}
+
+if (sessionStorage.getItem("q") == 1) { 
+  sessionStorage.removeItem("q")
+  setTimeout(() => _("#join-queue-btn").click(), 500); 
 }
 
 setTimeout(() => {

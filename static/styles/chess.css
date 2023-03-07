@@ -162,3 +162,82 @@
     color: #666666;
     font-size: 13.5px;
 }
+
+.gameCheckmate {
+    position: fixed;
+    z-index: 999;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 350px;
+    height: 300px;
+    background-color: white;
+    text-align: center;
+    border-radius: 10px / 5px;
+    overflow: hidden;
+    font-family: var(--m);
+    transition: .5s;
+    scale: 0;
+}
+
+.gameCheckmate .top {
+    background-color: green;
+    position: absolute;
+    top: 0%;
+    left: 0%;
+    width: 100%;
+    height: 40%;
+}
+
+.footer {
+    position: absolute;
+    top: 40%;
+    left: 0%;
+    width: 100%;
+    padding-top: 25px;
+    height: calc(100% - 40% - 25px);
+}
+
+.newgame-btn {
+    cursor: pointer;
+    font-family: var(--m);
+    color: white;
+    font-weight: bold;
+    background-color: #88ac4c;
+    border: 1px solid #88ac4c;
+    border-bottom: 3px solid #475c26;
+    width: 90%;
+    height: 45px;
+    font-size: 16px;
+}
+
+#winslos {
+    color: white;
+}
+
+#win-reason {
+    color: lightgray;
+}
+
+#shade {
+    position: fixed;
+    z-index: 100;
+    background-color: black;
+    opacity: 0.3;
+    width: 100%;
+    height: 100%;
+    left: 0%;
+    top: 0%;
+    scale: 0;
+    transition: .5s;
+}
+
+.closeModalBtn {
+    position: absolute;
+    top: 0.5%;
+    right: 0.5%;
+    color: white;
+    cursor: pointer;
+    font-family: var(--m);
+    z-index: 8888;
+}

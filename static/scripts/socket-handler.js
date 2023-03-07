@@ -27,6 +27,12 @@ socket.on("game-win", (data) => {
   console.dir(data);
   const winner = data.winner;
   const reason = data.reason;
+
+  if (winner != usernameNoId) _("#winslos").iText("You lost!")
+
+  _(".gameCheckmate").css("scale", 1)
+  _("#shade").css("scale", 1)
+
 })
 
 // Game end because of draw, stalemate, etc.

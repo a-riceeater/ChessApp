@@ -33,21 +33,32 @@ try {
       postData('/app-api/connect', { user: usernameNoId, room: sessionStorage.getItem("gameId") })
         .then((data) => {
           console.dir(data);
-          if (!data.joined) return window.location = '/'
-          match = data.match;
+          if (!data.joined) {
+            document.body.innerHTML = `
+            <div style="position: fixed; transform: translate(-50%, -50%); top: 60%; left: 50%; width: 50%; height: 50%; font-family: var(--m); text-align: center;">
+            <img src="../images/pawn-black.png"> 
+            <h1>Game not found...</h1>
+            <p>You tried to join a game that doesn't exist...</p>
+            <p><a href="/" style="color: blue; text-decoration: none;">Return Home</a></p>
+            </div>
+            `
+            return
+          } else {
+            match = data.match;
 
-          for (let i = 0; i < match.players.length; i++) {
-            if (match.players[i] == usernameNoId) continue;
-            opponent = match.players[i];
+            for (let i = 0; i < match.players.length; i++) {
+              if (match.players[i] == usernameNoId) continue;
+              opponent = match.players[i];
+            }
+
+            _("#opponent-name").iText(opponent);
+            _("#gt-value").iText(match.turn)
+
+            if (match.white == usernameNoId) { _("#gc-value").iText("White"); color = "white" }
+            if (match.black == usernameNoId) { _("#gc-value").iText("Black"); color = "black" }
+
+            setTimeout(() => _(".loading-text").innerHTML = `<p>Connected to room...</p>`, 300)
           }
-
-          _("#opponent-name").iText(opponent);
-          _("#gt-value").iText(match.turn)
-
-          if (match.white == usernameNoId) { _("#gc-value").iText("White"); color = "white" }
-          if (match.black == usernameNoId) { _("#gc-value").iText("Black"); color = "black" }
-
-          setTimeout(() => _(".loading-text").innerHTML = `<p>Connected to room...</p>`, 300)
         })
         .catch(err => {
           alert(err);
@@ -70,7 +81,7 @@ document.querySelectorAll(".piece").forEach(ele => {
     if (!selectedPiece && !ele.getAttribute("src").includes(color)) return;
     if (selectedPiece && !ele.getAttribute("src").includes("color")) {
       postData('/app-api/move', { user: usernameNoId, room: sessionStorage.getItem("gameId"), moveTo: ele.id, moving: selectedPiece.id, c: color, to: ele.parentNode.id, from: selectedPiece.parentNode.id, to: ele.parentNode.id })
-      .then((data) => {
+        .then((data) => {
           selectedPiece.classList.remove("selected")
           selectedPiece = null;
         })
@@ -96,7 +107,7 @@ document.querySelectorAll(".piece").forEach(ele => {
     console.log(color)
 
     postData('/app-api/move', { user: usernameNoId, room: sessionStorage.getItem("gameId"), moveTo: ele.id, moving: selectedPiece.id, c: color, to: ele.id, from: selectedPiece.parentNode.id, to: ele.parentNode.id })
-    .then((data) => {
+      .then((data) => {
         selectedPiece.classList.remove("selected")
         selectedPiece = null;
       })
@@ -146,8 +157,21 @@ async function postData(url = '', body = {}) {
   return response.json();
 }
 
+function hideModals() {
+  _(".modal", true).forEach(ele => ele.css("scale", 0))
+  _("#shade").css("scale", 0)
+}
+
+_("#shade").addEventListener("click", hideModals);
+_(".closeModalBtn", true).forEach(ele => ele.addEventListener("click", hideModals))
+
 window.addEventListener('beforeunload', (e) => {
   return "Are you want to leave?";
+})
+
+_(".newgame-btn").addEventListener("click", () => {
+  sessionStorage.setItem("q", 1);
+  window.location = '/?q=1'
 })
 
 setTimeout(() => {
@@ -156,5 +180,5 @@ setTimeout(() => {
 }, getRand(1000, 5000))
 
 window.addEventListener("error", (e) => {
-  alert(e.message + " " + e.lineno + " " + e.source);
+  console.error(e.message + " " + e.lineno + " " + e.source);
 })

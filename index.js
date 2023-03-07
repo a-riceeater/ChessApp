@@ -27,11 +27,13 @@ const corsOptions = {
 };
 import { Chess } from 'chess.js'
 
-
-const chess = new Chess();
-chess.move({ from: 'b2', to: 'b3', piece: 'p', color: 'white' }) // put a black pawn on a5
-console.log(chess.ascii());
-
+function arrayLength(array) {
+  var a = 0;
+  for (let i = 0; i < array.length; i++) {
+    if (array[i] != null) a++;
+  }
+  return a;
+}
 
 const apiLimiter = rateLimit({
   windowMs: 20000,
@@ -109,8 +111,13 @@ app.post("/app-api/join-queue", (req, res) => {
   // rooms[user] = "queue";
   res.send({ joined: true })
 
-  setTimeout(() => {
-    if (queueUsers.length == 2) {
+
+    if (arrayLength(queueUsers) > 2) {
+      queueUsers = [];
+      return;
+    }
+
+    if (arrayLength(queueUsers) == 2) {
       const id = createRandomId(26)
       io.to("queue").emit("join_game", { gameId: id });
       const match = new Match(id, queueUsers, queueUsers[0], queueUsers[1]);
@@ -118,7 +125,7 @@ app.post("/app-api/join-queue", (req, res) => {
       matches.set(id, match);
       queueUsers = [];
     }
-  }, 1000)
+    
 
   io.emit("update_queue", { amount: queueUsers.length });
 })
@@ -174,15 +181,22 @@ app.post("/app-api/move", (req, res) => {
     console.error("invalid move! (" + move + ")")
     moveStatus = false;
   }
-  finally {
-    var gameEnded = false;
-    
+  finally {    
+    var gameStatus = false;
+
     winHandler.isWin(match.board, (status, reason) => {
       console.log(status, reason)
-      gameEnded = status;
-      if (status == "checkmate") io.to(room).emit("game-win", { winner: match.turn, reason: reason });
+      gameStatus = true;
+      if (reason == "checkmate") io.to(room).emit("game-win", { winner: match.turn, reason: reason });
       else io.to(room).emit("game-end", { reason: reason, status: status })
+
+      if (status) matches.delete(room)
+      res.send({ moved: moveStatus })
+      io.to(room).emit("recieve-move", { moveTo: req.body.moveTo, moving: req.body.moving, match: match, inCheck: match.board.inCheck() });
+      return;
     })
+
+    if (gameStatus) return;
 
     if (moveStatus) {
       for (let i = 0; i < match.players.length; i++) {
@@ -193,7 +207,7 @@ app.post("/app-api/move", (req, res) => {
 
     if (moveStatus) io.to(room).emit("recieve-move", { moveTo: req.body.moveTo, moving: req.body.moving, match: match, inCheck: match.board.inCheck() });
 
-    res.send({ moved: moveStatus })
+    if (!gameStatus) res.send({ moved: moveStatus })
   }
 
 })
