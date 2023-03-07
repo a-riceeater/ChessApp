@@ -42,3 +42,7 @@ If this happens, navigate to the terminal and execute the following commands.
 - Accounts
 - Login tokens
 - Device compatibility
+
+# License
+
+You may view the license in the `LICENSE` file in the [Github Repo](https://github.com/ghwosty/ChessApp)
