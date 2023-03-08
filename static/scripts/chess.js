@@ -51,6 +51,14 @@ try {
             }
 
             _("#opponent-name").iText(opponent);
+            _("#win-amt").iText("+" + match.winAmt)
+            _("#lose-amt").iText("+" + match.loseAmt)
+
+            var draw;
+            if (match.drawAmt.toString().includes("-")) draw = match.drawAmt;
+            else draw = "+" + match.drawAmt;
+
+            _("#draw-amt").iText(draw)
 
             if (color == "white") {
               _("#user-white-name").iText(usernameNoId)
@@ -179,19 +187,6 @@ document.querySelectorAll(".square").forEach(ele => {
   })
 })
 
-async function postData(url = '', body = {}) {
-  const response = await fetch(url, {
-    method: 'POST',
-    mode: 'cors',
-    credentials: 'same-origin',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(body)
-  })
-  return response.json();
-}
-
 function hideModals() {
   _(".modal", true).forEach(ele => ele.css("scale", 0))
   _("#shade").css("scale", 0)
@@ -209,6 +204,17 @@ _(".newgame-btn").addEventListener("click", () => {
   window.location = '/?q=1'
 })
 
+_("#chatbox").addEventListener("keydown", (e) => {
+  if (e.key === "Enter") {
+    e.preventDefault();
+
+    if (_("#chatbox").value.replaceAll(" ", "") == "") return;
+
+    postData('/app-api/sendMsg', { content: _("#chatbox").value })
+    _("#chatbox").value = ''
+  }
+})
+
 setTimeout(() => {
   _("#loading-screen").css("opacity", 0);
   setTimeout(() => _("#loading-screen").hide(), 1000);
@@ -217,3 +223,16 @@ setTimeout(() => {
 window.addEventListener("error", (e) => {
   console.error(e.message + " " + e.lineno + " " + e.source);
 })
+
+async function postData(url = '', body = {}) {
+  const response = await fetch(url, {
+    method: 'POST',
+    mode: 'cors',
+    credentials: 'same-origin',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(body)
+  })
+  return response.json();
+}

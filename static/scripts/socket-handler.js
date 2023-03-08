@@ -49,3 +49,14 @@ socket.on("game-end", (data) => {
   console.dir(data);
   const drawReason = data.reason;
 })
+
+socket.on("recieve-msg", (data) => {
+  const msg = document.createElement("p")
+  msg.classList.add("dft-msg")
+  msg.innerHTML = `
+  <span class="dft-msg-user">${data.from}</span>
+  <span class="dft-msg-content">${data.content}</span>`
+
+  _(".chatMessages").appendChild(msg);
+  _(".chatMessages").scrollBottom();
+})

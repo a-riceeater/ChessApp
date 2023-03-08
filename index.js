@@ -86,13 +86,16 @@ app.use('/app-api/', apiLimiter)
 const matches = new Map();
 
 class Match {
-  constructor(id, players, black, white) {
+  constructor(id, players, black, white, winAmt, drawAmt, loseAmt) {
     this.id = id;
     this.players = players;
     this.board = new Chess();
     this.black = black;
     this.white = white;
     this.turn = white
+    this.winAmt = winAmt;
+    this.drawAmt = drawAmt;
+    this.loseAmt = loseAmt;
   }
 }
 
@@ -147,10 +150,13 @@ app.post("/app-api/join-queue", authenticateToken, (req, res) => {
   if (arrayLength(queueUsers) == 2) {
     const id = tokenManager.createRandomId(26)
     io.to("queue").emit("join_game", { gameId: id });
-    const match = new Match(id, queueUsers, queueUsers[0], queueUsers[1]);
-    matches.set(queueUsers, match)
-    matches.set(id, match);
-    queueUsers = [];
+    ratings.calculateWinDrawLose("a", "hola", (data) => {
+      console.dir(data);
+      const match = new Match(id, queueUsers, queueUsers[0], queueUsers[1], data.win, data.draw, data.lose);
+      matches.set(queueUsers, match)
+      matches.set(id, match);
+      queueUsers = [];
+    })
   }
 
 
@@ -282,6 +288,15 @@ app.post("/app-api/leave-queue", authenticateToken, (req, res) => {
   res.send({ left: true })
 })
 
+app.post("/app-api/sendMsg", authenticateToken, (req, res) => {
+  const from = res.user;
+  const content = req.body.content;
+
+  if (content.replaceAll(" ", "") == "") return;
+  io.to(rooms[from]).emit("recieve-msg", { content: content, from: from })
+  res.status(200).send({ sent: true })
+})
+
 server.listen(port, () => {
   console.log("\x1b[33mServer Running!")
   console.log("\x1b[31mThis is a development server, do not use this for hosting!\n")
@@ -322,3 +337,4 @@ io.on("connection", (socket) => {
     });
   })
 })
+

@@ -310,3 +310,32 @@
     font-family: var(--m);
     z-index: 8888;
 }
+
+.dft-msg-content {
+    color: rgb(207, 207, 207)
+}
+
+.chatMessages {
+    text-align: left;
+    overflow-y: scroll;
+    height: 100px;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.chatMessages::-webkit-scrollbar, .chatMessages::-webkit-scrollbar {
+    display: none;
+}
+
+.info-chat {
+    position: absolute;
+    bottom: 1%;
+    width: 80%;
+}
+
+#chatbox {
+    width: 100%;
+    font-family: var(--m);
+    padding-left: 5px;
+    outline: 0;
+}
