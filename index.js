@@ -229,6 +229,14 @@ app.post("/app-api/move", authenticateToken, (req, res) => {
       if (reason == "checkmate") io.to(room).emit("game-win", { winner: match.turn, reason: reason });
       else io.to(room).emit("game-end", { reason: reason, status: status })
 
+      ratings.changeUser(match.turn, match.winAmt, "add");
+      for (let i = 0; i < match.players.length; i++) {
+        if (match.players[i] != match.turn) {
+          ratings.changeUser(match.players[i], match.loseAmt, "sub")
+        }
+      }
+
+
       if (status) matches.delete(room)
       res.send({ moved: moveStatus })
 

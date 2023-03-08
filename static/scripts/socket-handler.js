@@ -1,4 +1,5 @@
 _(".loading-text").innerHTML = `<p>Establishing WSS Connection..</p>`
+var rating;
 
 const socket = io();
 
@@ -42,6 +43,9 @@ socket.on("game-win", (data) => {
   _(".gameCheckmate").css("scale", 1)
   _("#shade").css("scale", 1)
 
+  /*if (winner == usernameNoId) {
+    rating = data.winAmt
+  }*/
 })
 
 // Game end because of draw, stalemate, etc.

@@ -68,6 +68,18 @@ export default {
             loseA = (50).r();
             return callback({ win: winA, draw: drawA, lose: loseA })
         }
+    },
+    changeUser: function (user, newAmt, type) {
+        ratingDb.get(`SELECT * FROM ratings WHERE username = ?`, [user], (err, row) => {
+            if (err) throw err;
+            const start = row.rating;
+            var newA;
+            if (type == "add") newA = parseInt(start) + parseInt(newAmt);
+            else newA = parseInt(start) - parseInt(newAmt);
+            ratingDb.run("UPDATE ratings SET rating = ? WHERE username = ?", [newA, user], (err) => {
+                if (err) throw err;
+            })
+        })
     }
 }
 
