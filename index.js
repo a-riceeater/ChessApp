@@ -194,6 +194,11 @@ app.post("/app-api/move", authenticateToken, (req, res) => {
 
   console.log(`${match.turn} moving from ${req.body.from} to ${req.body.to}`)
 
+  if (io.sockets.adapter.rooms.get(room).size != 2) {
+    console.log(`NOT ALL USERS CONNECTED TO ${room}. ROOM LENGTH: ${io.sockets.adapter.rooms.get(room).size}`)
+    return res.send({ moved: false, notAllUsersConnected: true })
+  }
+
   var move;
   // if ( req.body.moving.replace(/[0-9]/g, '').toUpperCase() == "P") move = req.body.moveTo
   move = req.body.moving + req.body.moveTo
@@ -220,6 +225,7 @@ app.post("/app-api/move", authenticateToken, (req, res) => {
 
       if (status) matches.delete(room)
       res.send({ moved: moveStatus })
+
       io.to(room).emit("recieve-move", { moveTo: req.body.moveTo, moving: req.body.moving, match: match, inCheck: match.board.inCheck() });
       return;
     })

@@ -113,6 +113,9 @@ document.querySelectorAll(".piece").forEach(ele => {
         .then((data) => {
           selectedPiece.classList.remove("selected")
           selectedPiece = null;
+          if (data.notAllUsersConnected) {
+            alert("Not all users have connected yet. Please try again.")
+          }
         })
       return;
     }
@@ -165,6 +168,9 @@ document.querySelectorAll(".square").forEach(ele => {
     postData('/app-api/move', { user: usernameNoId, room: sessionStorage.getItem("gameId"), moveTo: ele.id, moving: selectedPiece.id, c: color, to: ele.id, from: selectedPiece.parentNode.id, to: ele.id })
       .then((data) => {
         console.dir(data);
+        if (data.notAllUsersConnected) {
+          alert("Not all users have connected yet. Please try again.")
+        }
         if (!data.moved) return;
         selectedPiece.classList.remove("selected")
         selectedPiece = null;
