@@ -50,6 +50,9 @@ try {
               opponent = match.players[i];
             }
 
+            if (match.white == usernameNoId) { _("#gc-value").iText("White"); color = "white" }
+            if (match.black == usernameNoId) { _("#gc-value").iText("Black"); color = "black" }
+
             _("#opponent-name").iText(opponent);
             _("#win-amt").iText("+" + match.winAmt)
             _("#lose-amt").iText("+" + match.loseAmt)
@@ -61,6 +64,7 @@ try {
             _("#draw-amt").iText(draw)
 
             if (color == "white") {
+              console.log("AM WHITE")
               _("#user-white-name").iText(usernameNoId)
               _("#user-black-name").iText(opponent)
 
@@ -75,6 +79,7 @@ try {
               })
             }
             else {
+              console.log("AM BLACK")
               _("#user-black-name").iText(usernameNoId)
                _("#user-white-name").iText(opponent)
 
@@ -91,8 +96,7 @@ try {
 
             _("#gt-value").iText(match.turn)
 
-            if (match.white == usernameNoId) { _("#gc-value").iText("White"); color = "white" }
-            if (match.black == usernameNoId) { _("#gc-value").iText("Black"); color = "black" }
+      
 
             setTimeout(() => _(".loading-text").innerHTML = `<p>Connected to room...</p>`, 300)
           }
