@@ -5,6 +5,8 @@ A simple NodeJS Multiplayer chess app.
 # Dependencies
 [Chess.js](https://github.com/jhlywa/chess.j)
 
+[Socket.io](https://socket.io) (migrating to manual websockets)
+
 # Running
 (Make sure you have Node.Js installed on your machine)
 1. Clone the github repository.
