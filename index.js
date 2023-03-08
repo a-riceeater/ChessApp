@@ -167,7 +167,7 @@ app.get("/app-api/get-queue-members", (req, res) => {
   res.send({ amount: queueUsers.length });
 })
 
-app.get("/play/:id", (req, res) => {
+app.get("/play/:id", authenticateToken, (req, res) => {
   res.sendFile(rp("html/game.html"))
 })
 
