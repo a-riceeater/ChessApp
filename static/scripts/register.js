@@ -1,4 +1,9 @@
 function register() {
+  const username = document.querySelector("#username").value;
+  const password = document.querySelector("#password").value;
+
+  if (username.replaceAll(" ", "") == "" || password.replaceAll(" ", "") == "") return;
+
   fetch("/app-api/register", {
     method: "POST",
     mode: "cors",
@@ -6,8 +11,8 @@ function register() {
       'Content-Type': 'application/json'
     },
     body: JSON.stringify({
-      username: "a",
-      password: 'a'
+      username: username,
+      password: password
     }),
     
   })
@@ -16,8 +21,11 @@ function register() {
   })
   .then((data) => {
     console.dir(data);
+    localStorage.setItem("username", data.username)
+    if (data.created) window.location = '/'
   })
   .catch(err => {
+    console.error(err);
   document.body.innerHTML = `
         <div style="position: fixed; transform: translate(-50%, -50%); top: 50%; left: 50%; width: 50%; height: 50%; font-family: var(--m); text-align: center;">
         <img src="images/pawn-black.png"> 

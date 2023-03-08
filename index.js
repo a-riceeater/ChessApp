@@ -55,14 +55,14 @@ function authenticateToken(req, res, next) {
   if (!req.headers.cookie.includes("token=")) return res.redirect("/register")
   const token = req.headers.cookie.split("token=")[1];
   if (!token) return res.redirect("/register")
-  else { 
-    tokenManager.verifyToken(token, (verified) => {
+  else {
+    tokenManager.verifyToken(token, res, (verified) => {
       if (verified) next()
       else {
         res.clearCookie("token")
         res.redirect("/register")
       }
-    }) 
+    })
   }
 }
 
@@ -72,12 +72,12 @@ function authAlready(req, res, next) {
   const token = req.headers.cookie.split("token=")[1];
   if (!token) return next();
   else {
-    tokenManager.verifyToken(token, (verified) => {
+    tokenManager.verifyToken(token, res, (verified) => {
       if (verified) {
         res.redirect("/")
       }
       else return next();
-    }) 
+    })
   }
 }
 
@@ -124,11 +124,11 @@ app.get("/login", authAlready, (req, res) => {
   res.sendFile(rp("html/login.html"))
 })
 
-app.get("/play", (req, res) => {
+app.get("/play", authenticateToken, (req, res) => {
   res.sendFile(rp("html/game.html"))
 })
 
-app.post("/app-api/join-queue", (req, res) => {
+app.post("/app-api/join-queue", authenticateToken, (req, res) => {
   const user = req.body.user;
   if (user.replaceAll(" ", "") == "") return;
 
@@ -184,7 +184,7 @@ app.post("/app-api/connect", (req, res) => {
 })
 
 import winHandler from './server/winHandler.js'
-app.post("/app-api/move", (req, res) => {
+app.post("/app-api/move", authenticateToken, (req, res) => {
   const user = req.body.user;
   const socket = io.sockets.sockets.get(sockets[user]);
   const room = req.body.room;
@@ -242,9 +242,31 @@ app.post("/app-api/move", (req, res) => {
 
 // Register/login
 
+import accounts from "./server/accounts.js"
+import ratings from './server/ratings.js'
 
 app.post("/app-api/register", (req, res) => {
-  
+  try {
+    if (req.body.username.replaceAll(" ", "") == "" || req.body.password.replaceAll(" ", "") == "") return;
+    accounts.register(req.body.username, req.body.password, (created) => {
+      if (created) {
+        const token = tokenManager.createToken(req.body.username);
+        res.cookie("token", token);
+        res.send({ created: true, username: req.body.username })
+      } else {
+        res.send({ created: false });
+      }
+    })
+  } catch (err) {
+    console.error(err);
+  }
+})
+
+app.post('/app-api/get-user-ratings', authenticateToken, (req, res) => {
+  if (req.body.user.replaceAll(" ", "") == "") return;
+  ratings.getRating(req.body.user, (rating) => {
+    res.send({ rating: rating });
+  })
 })
 
 server.listen(port, () => {
@@ -271,7 +293,7 @@ io.on("connection", (socket) => {
         }
       }
     })
-    Object.values(sockets).forEach(function(key) {
+    Object.values(sockets).forEach(function (key) {
       if (key == socket.id) {
         console.log("Removing " + key + " from socket array.")
         delete sockets[key]

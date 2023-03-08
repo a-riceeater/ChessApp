@@ -4,9 +4,11 @@
     --m: 'Montserrat', serif;
 }
 
-body {
-    background-image: url("../images/board-bg.png");
-    background-repeat: no-repeat;
+@media only screen and (max-width: 1366px) {
+    #board-bg {
+        width: 650px;
+        height: 650px;
+    }
 }
 
 .container {
@@ -52,7 +54,8 @@ body {
 }
 
 #join-queue-btn:hover {
-    background-color: rgb(0, 0, 0, 0.08);;
+    background-color: rgb(0, 0, 0, 0.08);
+    ;
 }
 
 #loading-screen {

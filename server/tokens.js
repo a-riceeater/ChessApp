@@ -31,7 +31,7 @@ export default {
     }
     return result;
   },
-  verifyToken: function(token, callback) {
+  verifyToken: function(token, res, callback) {
     tokenDb.get(`SELECT * FROM tokens WHERE token = ?`, [token], (err, row) => {
       if (err) {
         console.error(err);

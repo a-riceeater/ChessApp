@@ -6,17 +6,22 @@ async function $src(callback) {
   callback()
 }
 
-socket.on("recieve-move", (data) => {  console.dir(document.getElementById(data.moveTo).classList.contains("piece"));
-
+socket.on("recieve-move", (data) => {
+  var returnStatus = false;
+  console.log(document.getElementById(data.moveTo), document.getElementById(data.moving));
   document.getElementById(data.moveTo).childNodes.forEach((ele) => {
     console.log(ele);
     if (!ele) return;
     if (ele.classList.contains("piece")) {
       console.log("CONTAINS")
       ele.remove();
+      //document.getElementById(data.moveTo).appendChild(document.getElementById(data.moving))
+      //returnStatus = true;
+      //return;
     }
   })
-
+  console.log(returnStatus);
+  if (returnStatus) return;
   document.getElementById(data.moveTo).appendChild(document.getElementById(data.moving))
   match = data.match;
   _("#gt-value").iText(match.turn)

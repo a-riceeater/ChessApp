@@ -22,8 +22,7 @@ for (let i = 0; i < chessboardRows.length; i++) {
 
 const username = localStorage.getItem("username")
 var usernameNoId;
-if (username) usernameNoId = localStorage.getItem("username").replace("." + username.split(".")[1], "")
-if (!username) window.location = '/ '
+if (username) usernameNoId = username;
 
 _("#uuid").iText(username.split(".")[1])
 try {
@@ -34,7 +33,6 @@ try {
         .then((data) => {
           console.dir(data);
           if (!data.joined) {
-/*
             document.body.innerHTML = `
             <div style="position: fixed; transform: translate(-50%, -50%); top: 60%; left: 50%; width: 50%; height: 50%; font-family: var(--m); text-align: center;">
             <img src="../images/pawn-black.png"> 
@@ -42,7 +40,7 @@ try {
             <p>You tried to join a game that doesn't exist...</p>
             <p><a href="/" style="color: blue; text-decoration: none;">Return Home</a></p>
             </div>
-            `*/
+            `
             return
           } else {
             match = data.match;
@@ -57,10 +55,30 @@ try {
             if (color == "white") {
               _("#user-white-name").iText(usernameNoId)
               _("#user-black-name").iText(opponent)
+
+              postData('/app-api/get-user-ratings', { user: usernameNoId })
+              .then((data) => {
+                _("#user-white-rating").iText(`(${data.rating})`);
+              })
+
+              postData('/app-api/get-user-ratings', { user: opponent })
+              .then((data) => {
+                _("#user-black-rating").iText(`(${data.rating})`);
+              })
             }
             else {
               _("#user-black-name").iText(usernameNoId)
                _("#user-white-name").iText(opponent)
+
+               postData('/app-api/get-user-ratings', { user: opponent })
+              .then((data) => {
+                _("#user-white-rating").iText(`(${data.rating})`);
+              })
+
+              postData('/app-api/get-user-ratings', { user: usernameNoId })
+              .then((data) => {
+                _("#user-black-rating").iText(`(${data.rating})`);
+              })
             }
 
             _("#gt-value").iText(match.turn)
@@ -91,7 +109,7 @@ document.querySelectorAll(".piece").forEach(ele => {
 
     if (!selectedPiece && !ele.getAttribute("src").includes(color)) return;
     if (selectedPiece && !ele.getAttribute("src").includes("color")) {
-      postData('/app-api/move', { user: usernameNoId, room: sessionStorage.getItem("gameId"), moveTo: ele.id, moving: selectedPiece.id, c: color, to: ele.parentNode.id, from: selectedPiece.parentNode.id, to: ele.parentNode.id })
+      postData('/app-api/move', { user: usernameNoId, room: sessionStorage.getItem("gameId"), moveTo: ele.parentNode.id, moving: selectedPiece.id, c: color, to: ele.parentNode.id, from: selectedPiece.parentNode.id, to: ele.parentNode.id })
         .then((data) => {
           selectedPiece.classList.remove("selected")
           selectedPiece = null;
