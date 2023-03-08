@@ -154,7 +154,7 @@ app.post("/app-api/join-queue", authenticateToken, (req, res) => {
   }
 
 
-  io.emit("update_queue", { amount: queueUsers.length });
+  io.emit("update_queue", { amount: arrayLength(queueUsers) });
 })
 
 app.get("/app-api/get-queue-members", (req, res) => {
@@ -275,6 +275,13 @@ app.post('/app-api/get-user-ratings', authenticateToken, (req, res) => {
   })
 })
 
+app.post("/app-api/leave-queue", authenticateToken, (req, res) => {
+  if (queueUsers.length == 2) return;
+  queueUsers = [];
+  io.emit("update_queue", { amount: arrayLength(queueUsers) });
+  res.send({ left: true })
+})
+
 server.listen(port, () => {
   console.log("\x1b[33mServer Running!")
   console.log("\x1b[31mThis is a development server, do not use this for hosting!\n")
@@ -290,15 +297,23 @@ io.on("connection", (socket) => {
   })
 
   socket.on("disconnect", () => {
+    var user;
     Object.getOwnPropertyNames(sockets).forEach((key) => {
       if (sockets[key] == socket.id) {
         if (playing.includes(key)) {
+          user = key;
           console.log("MATCH THAT " + key + " IS PLAYING IN HAS DISCONNECTED.")
 
           // matches.remove()
         }
       }
     })
+
+    if (queueUsers.includes(user)) {
+      delete queueUsers[user];
+      io.emit("update_queue", { amount: arrayLength(queueUsers) });
+    }
+
     Object.values(sockets).forEach(function (key) {
       if (key == socket.id) {
         console.log("Removing " + key + " from socket array.")

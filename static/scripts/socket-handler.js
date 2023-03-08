@@ -7,7 +7,7 @@ async function $src(callback) {
 }
 
 socket.on("recieve-move", (data) => {
-  var returnStatus = false;
+  var deletedPiece;
   console.log(document.getElementById(data.moveTo), document.getElementById(data.moving));
   document.getElementById(data.moveTo).childNodes.forEach((ele) => {
     console.log(ele);
@@ -15,16 +15,20 @@ socket.on("recieve-move", (data) => {
     if (ele.classList.contains("piece")) {
       console.log("CONTAINS")
       ele.remove();
-      //document.getElementById(data.moveTo).appendChild(document.getElementById(data.moving))
-      //returnStatus = true;
-      //return;
+      const audio = new Audio(`/sounds/take.wav`);
+      audio.play();
+      deletedPiece = true;
     }
   })
-  console.log(returnStatus);
-  if (returnStatus) return;
   document.getElementById(data.moveTo).appendChild(document.getElementById(data.moving))
   match = data.match;
   _("#gt-value").iText(match.turn)
+  if (!deletedPiece) {
+    const playIndex = (Math.random() * (7 - 1) + 1).toFixed();
+    console.log("Requesting play playload of /sounds/place" + playIndex + ".wav (playIndex " + playIndex + ")")
+    const audio = new Audio(`/sounds/place${playIndex}.wav`);
+    audio.play();
+  }
 })
 
 // Game end because of checkmate

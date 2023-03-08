@@ -52,8 +52,17 @@ _("#reset").addEventListener("click", (e) => {
   window.location = '';
 })
 
+var inQueue;
 _("#join-queue-btn").addEventListener("click", (e) => {
   const btn = _("#join-queue-btn");
+  if (btn.innerText.includes("Cancel")) {
+    postData('/app-api/leave-queue')
+      .then((data) => {
+        btn.innerText = "Join Queue"
+        inQueue = false;
+      })
+    return;
+  }
   if (btn.innerText == "Confirm") {
     e.preventDefault();
     const value = _("#username-input").value;
@@ -70,8 +79,9 @@ _("#join-queue-btn").addEventListener("click", (e) => {
 
         var min = 0;
         var sec = 0;
+        inQueue = true;
 
-        setTimeout(() => btn.iText("Cancel (0:0)"), getRand(200, 500))
+        setTimeout(() => { if (!inQueue) return; btn.iText("Cancel (0:0)"), getRand(200, 500) })
 
         function inc() {
           sec++;
@@ -79,6 +89,7 @@ _("#join-queue-btn").addEventListener("click", (e) => {
             sec = 0;
             min++;
           }
+          if (!inQueue) return;
           btn.iText(`Cancel (${min}:${sec})`)
           setTimeout(inc, 1000)
         }
@@ -86,7 +97,7 @@ _("#join-queue-btn").addEventListener("click", (e) => {
         setTimeout(inc, 1000)
       })
   } else {
-    postData('/app-api/leave-queue')
+
   }
 })
 
@@ -110,7 +121,7 @@ async function postData(url = '', body = {}) {
         <p><a href="/" style="color: blue; text-decoration: none;">Reload</a></p>
         </div>
         `
-        document.body.style.background = "white";
+      document.body.style.background = "white";
     })
   return response.json();
 }
@@ -121,9 +132,9 @@ if (document.URL.includes("?")) {
   }
 }
 
-if (sessionStorage.getItem("q") == 1) { 
+if (sessionStorage.getItem("q") == 1) {
   sessionStorage.removeItem("q")
-  setTimeout(() => _("#join-queue-btn").click(), 500); 
+  setTimeout(() => _("#join-queue-btn").click(), 500);
 }
 
 setTimeout(() => {

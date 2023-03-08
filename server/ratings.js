@@ -22,5 +22,6 @@ export default {
             if (row == null) return callback(null);
             return callback(row.rating)
         })
-    }
+    },
+    
 }
