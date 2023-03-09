@@ -4,6 +4,7 @@ import tokens from './server/tokens.js'
 import ms from './ms.js'
 
 const clients = new Map();
+const clientsI = new Map();
 const rooms = new Map();
 
 function getClients() {
@@ -20,7 +21,6 @@ function on(socket, d) {
             console.log("Established WSS connection " + socket.id + " " + data.username)
             ms.putSockets(data.username, id);
             socket.emit("connection-established", {})
-
         }
     }
 }
