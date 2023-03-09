@@ -5,12 +5,9 @@ WebSocket.prototype.emit = function (name, data) {
 }
 
 WebSocket.prototype.on = function (name, callback) {
-    const name = d[0].name;
-
     ons.set(name, callback);
-
-
 }
+
 
 const SocketAPI = {
     handleMessage: function (d) {
@@ -19,6 +16,7 @@ const SocketAPI = {
         const data = d[1];
 
         [...ons.keys()].forEach((on) => {
+            console.log(on);
             if (on == name) {
                 
             }

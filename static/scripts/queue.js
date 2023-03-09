@@ -27,7 +27,16 @@ async function connectToServer() {
   socket.onmessage = (message) => {
     SocketAPI.handleMessage(message);
   };
+
+  socket["on"] = function (name, callback) {
+    ons.set(name, callback);
+  }
+
 })();
+
+socket.on("update-queue", (data) => {
+  console.log(data);
+})
 /*
 socket.on("update_queue", (data) => {
   console.dir(data);
