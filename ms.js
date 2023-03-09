@@ -36,6 +36,7 @@ const wss = new WebSocket.Server({ port: process.env.wssPort });
 
 const clients = new Map();
 
+// Setting WSS functions
 wss["broadcast"] = function (name, data) {
   [...clients.keys()].forEach((client) => {
     client.send(JSON.stringify([{ name: name}, data]));
@@ -46,9 +47,14 @@ wss["toRoom"] = function (room, name, data) {
 
 }
 
-wss["join"] = function (room) {
-  wssF.joinRoom(room)
+wss["rooms"] = {
+  length: function (room) {
+    wssF.getRoomLength(room, (l) => {
+      return l;
+    });
+  }
 }
+
 
 function arrayLength(array) {
   var a = 0;
@@ -157,8 +163,8 @@ app.post("/app-api/join-queue", authenticateToken, (req, res) => {
   if (user.replaceAll(" ", "") == "") return;
 
   queueUsers.push(user);
-  const socket = io.sockets.sockets.get(sockets[user]);
-  socket.join("queue");
+  // const socket = io.sockets.sockets.get(sockets[user]);
+  clients.get(sockets[user]).join("queue");
   // rooms[user] = "queue";
   res.send({ joined: true })
 
@@ -180,8 +186,9 @@ app.post("/app-api/join-queue", authenticateToken, (req, res) => {
     })
   }
 
+  console.log(wss.rooms.length("queue"))
 
-  io.emit("update_queue", { amount: arrayLength(queueUsers) });
+  wss.broadcast("update_queue", { amount: arrayLength(queueUsers) });
 })
 
 app.get("/app-api/get-queue-members", (req, res) => {
@@ -342,11 +349,16 @@ wss.on("connection", (ws) => {
   clients.set(ws, id);
   clients.set(id, ws);
   ws["id"]=id;
+  ws["join"] = function (room) {
+    wssF.joinRoom(ws, room)
+  }
+
+  // Sets
   wssF.setClient(ws, id)
 
   ws.on('message', (data) => {
     wssF.on(ws, JSON.parse(data));
-    wss.broadcast({ name: "hola"} , "b")
+    // wss.broadcast("hola" , "b")
   })
 
   ws.on("close", () => {

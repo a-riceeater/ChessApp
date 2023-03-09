@@ -18,9 +18,9 @@ function on(socket, d) {
     switch (name) {
         case "establish-connection": {
             console.log("Established WSS connection " + socket.id + " " + data.username)
-            ms.putSockets(data, id);
+            ms.putSockets(data.username, id);
             socket.emit("connection-established", {})
-            
+
         }
     }
 }
@@ -36,6 +36,18 @@ function deleteClient(ws) {
 
 function joinRoom(ws, name) {
     rooms.set(ws, name)
-}  
+    console.log("Someone joined room " + name)
+}
 
-export default { setClient, on, deleteClient, joinRoom }
+function getRoomLength(room, cb) {
+    var length = 0;
+
+    Object.getOwnPropertyNames(rooms).forEach((key) => {
+        console.log(key, "ROOM")
+        if (key == room) length++;
+    });
+
+    cb(length);
+}
+
+export default { setClient, on, deleteClient, joinRoom, getRoomLength }
