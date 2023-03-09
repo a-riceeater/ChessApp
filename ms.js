@@ -29,6 +29,27 @@ const corsOptions = {
 import { Chess } from 'chess.js'
 import tokenManager from './server/tokens.js'
 
+import wssF from './wss.js'
+
+import WebSocket from 'ws';
+const wss = new WebSocket.Server({ port: process.env.wssPort });
+
+const clients = new Map();
+
+wss["broadcast"] = function (name, data) {
+  [...clients.keys()].forEach((client) => {
+    client.send(JSON.stringify([{ name: name}, data]));
+  });
+}
+
+wss["toRoom"] = function (room, name, data) {
+
+}
+
+wss["join"] = function (room) {
+  wssF.joinRoom(room)
+}
+
 function arrayLength(array) {
   var a = 0;
   for (let i = 0; i < array.length; i++) {
@@ -313,25 +334,13 @@ server.listen(port, () => {
   console.log("WSS PORT: " + process.env.wssPort)
 })
 
-import wssF from './wss.js'
-//wss.init();
-
-import WebSocket from 'ws';
-const wss = new WebSocket.Server({ port: process.env.wssPort });
 import tokens from './server/tokens.js'
-
-const clients = new Map();
-
-wss["broadcast"] = function (name, data) {
-  [...clients.keys()].forEach((client) => {
-    client.send(JSON.stringify([{ name: name}, data]));
-  });
-}
 
 wss.on("connection", (ws) => {
   // Set data
   const id = tokens.createRandomId(26);
   clients.set(ws, id);
+  clients.set(id, ws);
   ws["id"]=id;
   wssF.setClient(ws, id)
 
