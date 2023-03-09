@@ -305,14 +305,18 @@ app.post("/app-api/sendMsg", authenticateToken, (req, res) => {
   res.status(200).send({ sent: true })
 })
 
+const portAbove = process.env.portAbove;
 server.listen(port, () => {
   console.log("\x1b[33mServer Running!")
   console.log("\x1b[31mThis is a development server, do not use this for hosting!\n")
   console.log(`\x1b[0mRunning on:\nhttp://localhost:${port}\nhttps://chessapp.darthvader1925.repl.co (Public Host)`)
+  console.log("WSS PORT: " + process.env.wssPort)
 })
 
+import wss from './wss.js'
+wss.init();
 
-io.on("connection", (socket) => {
+/*io.on("connection", (socket) => {
 
   socket.on("establish-connection", (data) => {
     console.log("Established WSS connection " + socket.id + " " + data.username)
@@ -347,3 +351,4 @@ io.on("connection", (socket) => {
   })
 })
 
+*/

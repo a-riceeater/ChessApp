@@ -1,8 +1,13 @@
 const username = localStorage.getItem("username")
 var usernameNoId;
 if (username) usernameNoId = localStorage.getItem("username").replace("." + username.split(".")[1], "")
-const socket = io();
-
+// const socket = io();
+try {
+const socket = new WebSocket('wss://' + window.location.origin.replace("https://", ""));
+} catch (err) {
+  alert(err)
+}
+/*
 socket.on("update_queue", (data) => {
   console.dir(data);
   _("#queue-amt").iText(data.amount + " users in queue")
@@ -12,7 +17,7 @@ socket.on("join_game", (data) => {
   const gameId = data.gameId;
   sessionStorage.setItem("gameId", gameId)
   window.location = '/play/' + gameId;
-})
+})*/
 
 fetch('/app-api/get-queue-members', { headers: { 'Content-Type': 'application/json' } })
   .then((data) => { return data.json() })
