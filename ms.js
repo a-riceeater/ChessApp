@@ -16,7 +16,7 @@ const io = new Server(server, { 'force new connection': true });
 // const favicon = require('serve-favicon');
 import rateLimit from 'express-rate-limit'
 //const helmet = require("helmet"); Use this if you want sequirty response headers (may cause bugs with code)
-const port = process.env.portAbove; // Change this to proccess.env.portAbove if experiencing errors
+const port = process.env.port; // Change this to proccess.env.portAbove if experiencing errors
 // const prompt = require('prompt-sync')({ sigint: true });
 import fs from "fs"
 import sqlite3 from "sqlite3"
@@ -28,6 +28,34 @@ const corsOptions = {
 };
 import { Chess } from 'chess.js'
 import tokenManager from './server/tokens.js'
+
+import wssF from './wss.js'
+
+import WebSocket from 'ws';
+const wss = new WebSocket.Server({ port: process.env.wssPort });
+
+const clients = new Map();
+const clientsI = new Map();
+
+// Setting WSS functions
+wss["broadcast"] = function (name, data) {
+  [...clients.keys()].forEach((client) => {
+    client.send(JSON.stringify([{ name: name}, data]));
+  });
+}
+
+wss["toRoom"] = function (room, name, data) {
+
+}
+
+wss["rooms"] = {
+  length: function (room) {
+    wssF.getRoomLength(room, (l) => {
+      return l;
+    });
+  }
+}
+
 
 function arrayLength(array) {
   var a = 0;
@@ -136,8 +164,8 @@ app.post("/app-api/join-queue", authenticateToken, (req, res) => {
   if (user.replaceAll(" ", "") == "") return;
 
   queueUsers.push(user);
-  const socket = io.sockets.sockets.get(sockets[user]);
-  socket.join("queue");
+  // const socket = io.sockets.sockets.get(sockets[user]);
+  clientsI.get(sockets[user]).join("queue");
   // rooms[user] = "queue";
   res.send({ joined: true })
 
@@ -159,8 +187,7 @@ app.post("/app-api/join-queue", authenticateToken, (req, res) => {
     })
   }
 
-
-  io.emit("update_queue", { amount: arrayLength(queueUsers) });
+  wss.broadcast("update_queue", { amount: arrayLength(queueUsers) });
 })
 
 app.get("/app-api/get-queue-members", (req, res) => {
@@ -305,14 +332,50 @@ app.post("/app-api/sendMsg", authenticateToken, (req, res) => {
   res.status(200).send({ sent: true })
 })
 
-server.listen(port, () => {
+const portAbove = process.env.portAbove;
+server.listen(portAbove, () => {
   console.log("\x1b[33mServer Running!")
   console.log("\x1b[31mThis is a development server, do not use this for hosting!\n")
-  console.log(`\x1b[0mRunning on:\nhttp://localhost:${port}\nhttps://chessapp.darthvader1925.repl.co (Public Host)`)
+  console.log(`\x1b[0mRunning on:\nhttp://localhost:${portAbove}\nhttps://chessapp.darthvader1925.repl.co (Public Host)`)
+  console.log("WSS PORT: " + process.env.wssPort)
 })
 
+import tokens from './server/tokens.js'
 
-io.on("connection", (socket) => {
+wss.on("connection", (ws) => {
+  // Set data
+  const id = tokens.createRandomId(26);
+  clients.set(ws, id);
+  clientsI.set(id, ws);
+  ws["id"]=id;
+  ws["join"] = function (room) {
+    wssF.joinRoom(ws, room)
+  }
+
+  // Sets
+  wssF.setClient(ws, id)
+
+  ws.on('message', (data) => {
+    wssF.on(ws, JSON.parse(data));
+  })
+
+  ws.on("close", () => {
+    clients.delete(ws);
+    wssF.deleteClient(ws);
+  });
+
+  ws.onerror = function () {
+    console.log('websocket error')
+  }
+})
+
+function putSockets(user, id) {
+  sockets[user] = id;
+}
+
+export default { clients, putSockets };
+
+/*io.on("connection", (socket) => {
 
   socket.on("establish-connection", (data) => {
     console.log("Established WSS connection " + socket.id + " " + data.username)
@@ -347,3 +410,4 @@ io.on("connection", (socket) => {
   })
 })
 
+*/

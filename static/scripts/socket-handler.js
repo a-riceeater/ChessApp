@@ -1,7 +1,19 @@
 _(".loading-text").innerHTML = `<p>Establishing WSS Connection..</p>`
 var rating;
+var socket;
 
-const socket = io();
+async function connectToServer() {
+  const ws = new WebSocket('ws://' + window.location.origin.replace("http://", "") + ":1025");
+  socket = ws;
+  return new Promise((resolve, reject) => {
+    const timer = setInterval(() => {
+      if (ws.readyState === 1) {
+        clearInterval(timer)
+        resolve(ws);
+      }
+    }, 10);
+  });
+}
 
 async function $src(callback) {
   callback()
