@@ -325,6 +325,7 @@ const clients = new Map();
 wss.on("connection", (ws) => {
   const id = tokens.createRandomId(26);
   clients.set(ws, id);
+  ws["id"]=id;
   wssF.setClient(ws, id)
   console.log("Client with ID of " + id + " is connecting.")
 

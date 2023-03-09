@@ -23,7 +23,7 @@ async function connectToServer() {
 
   _("#pc-username").innerHTML = `Welcome, ${usernameNoId}.`
 
-  socket.emit("establish-connection", { usernameNoId })
+  socket.emit("establish-connection", { username: usernameNoId })
 })();
 /*
 socket.on("update_queue", (data) => {

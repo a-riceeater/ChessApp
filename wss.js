@@ -11,9 +11,8 @@ function getClients() {
 
 function on(socket, d) {
     const id = clients.get(socket);
-    const name = d[0]
+    const name = d[0].name;
     const data = d[1];
-    console.log(data, id);
 
     switch (name) {
         case "establish-connection": {
