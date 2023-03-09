@@ -322,19 +322,27 @@ import tokens from './server/tokens.js'
 
 const clients = new Map();
 
+wss["broadcast"] = function (name, data) {
+  [...clients.keys()].forEach((client) => {
+    client.send(JSON.stringify([{ name: name}, data]));
+  });
+}
+
 wss.on("connection", (ws) => {
+  // Set data
   const id = tokens.createRandomId(26);
   clients.set(ws, id);
   ws["id"]=id;
   wssF.setClient(ws, id)
-  console.log("Client with ID of " + id + " is connecting.")
 
   ws.on('message', (data) => {
     wssF.on(ws, JSON.parse(data));
+    wss.broadcast({ name: "hola"} , "b")
   })
 
   ws.on("close", () => {
     clients.delete(ws);
+    wssF.deleteClient(ws);
   });
 
   ws.onerror = function () {

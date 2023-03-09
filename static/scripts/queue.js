@@ -24,6 +24,10 @@ async function connectToServer() {
   _("#pc-username").innerHTML = `Welcome, ${usernameNoId}.`
 
   socket.emit("establish-connection", { username: usernameNoId })
+
+  socket.onmessage = (message) => {
+    console.log(message.data);
+  };
 })();
 /*
 socket.on("update_queue", (data) => {

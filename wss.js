@@ -18,7 +18,8 @@ function on(socket, d) {
         case "establish-connection": {
             console.log("Established WSS connection " + socket.id + " " + data.username)
             ms.putSockets(data, id);
-            // socket.emit("connection-established", {})
+            socket.emit("connection-established", {})
+            
         }
     }
 }
@@ -27,4 +28,8 @@ function setClient(ws, id) {
     clients.set(ws, id)
 }
 
-export default { setClient, on }
+function deleteClient(ws) {
+    clients.delete(ws);
+}
+
+export default { setClient, on, deleteClient }
