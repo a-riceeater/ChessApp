@@ -16,7 +16,7 @@ const io = new Server(server, { 'force new connection': true });
 // const favicon = require('serve-favicon');
 import rateLimit from 'express-rate-limit'
 //const helmet = require("helmet"); Use this if you want sequirty response headers (may cause bugs with code)
-const port = process.env.portAbove; // Change this to proccess.env.portAbove if experiencing errors
+const port = process.env.port; // Change this to proccess.env.portAbove if experiencing errors
 // const prompt = require('prompt-sync')({ sigint: true });
 import fs from "fs"
 import sqlite3 from "sqlite3"
@@ -313,8 +313,39 @@ server.listen(port, () => {
   console.log("WSS PORT: " + process.env.wssPort)
 })
 
-import wss from './wss.js'
-wss.init();
+import wssF from './wss.js'
+//wss.init();
+
+import WebSocket from 'ws';
+const wss = new WebSocket.Server({ port: process.env.wssPort });
+import tokens from './server/tokens.js'
+
+const clients = new Map();
+
+wss.on("connection", (ws) => {
+  const id = tokens.createRandomId(26);
+  clients.set(ws, id);
+  wssF.setClient(ws, id)
+  console.log("Client with ID of " + id + " is connecting.")
+
+  ws.on('message', (data) => {
+    wssF.on(ws, JSON.parse(data));
+  })
+
+  ws.on("close", () => {
+    clients.delete(ws);
+  });
+
+  ws.onerror = function () {
+    console.log('websocket error')
+  }
+})
+
+function putSockets(user, id) {
+  sockets[user] = id;
+}
+
+export default { clients, putSockets };
 
 /*io.on("connection", (socket) => {
 

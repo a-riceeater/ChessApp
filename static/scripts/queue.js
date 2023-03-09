@@ -2,11 +2,29 @@ const username = localStorage.getItem("username")
 var usernameNoId;
 if (username) usernameNoId = localStorage.getItem("username").replace("." + username.split(".")[1], "")
 // const socket = io();
-try {
-const socket = new WebSocket('wss://' + window.location.origin.replace("https://", ""));
-} catch (err) {
-  alert(err)
+var socket;
+
+async function connectToServer() {
+  const ws = new WebSocket('ws://' + window.location.origin.replace("http://", "") + ":1025");
+  socket = ws;
+  return new Promise((resolve, reject) => {
+    const timer = setInterval(() => {
+      if (ws.readyState === 1) {
+        clearInterval(timer)
+        resolve(ws);
+      }
+    }, 10);
+  });
 }
+
+(async function () {
+  await connectToServer();
+  console.log("Connected to websocket.")
+
+  _("#pc-username").innerHTML = `Welcome, ${usernameNoId}.`
+
+  socket.emit("establish-connection", { usernameNoId })
+})();
 /*
 socket.on("update_queue", (data) => {
   console.dir(data);
@@ -25,30 +43,6 @@ fetch('/app-api/get-queue-members', { headers: { 'Content-Type': 'application/js
     _("#queue-amt").iText(data.amount + " users in queue")
   })
 
-if (!username) {
-  _("#pc-username").innerHTML = `<input type="text" id="username-input" placeholder="Your username for this session">`
-  _("#join-queue-btn").iText("Confirm")
-
-  setTimeout(() => {
-    _("#username-input").addEventListener("keydown", (e) => {
-      if (e.key === "Enter") {
-        e.preventDefault();
-        const value = _("#username-input").value;
-        if (value.replaceAll(" ", "") == "") return;
-        const id = (performance.now().toString(26) + Math.random().toString(26)).replace(/\./g, '');
-        localStorage.setItem("username", value + "." + id)
-        window.location = ''
-      }
-    })
-  }, 150)
-}
-
-else {
-  _("#pc-username").innerHTML = `Welcome, ${usernameNoId}.`
-  _("#uuid").iText(username.split(".")[1])
-
-  socket.emit("establish-connection", { username: usernameNoId });
-}
 
 _("#reset").addEventListener("click", (e) => {
   const p = confirm("This will reset your data. Are you sure?")
