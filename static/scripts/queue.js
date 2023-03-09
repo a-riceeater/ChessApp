@@ -6,7 +6,6 @@ var socket;
 
 async function connectToServer() {
   const ws = new WebSocket('ws://' + window.location.origin.replace("http://", "") + ":1025");
-  socket = ws;
   return new Promise((resolve, reject) => {
     const timer = setInterval(() => {
       if (ws.readyState === 1) {
@@ -18,7 +17,7 @@ async function connectToServer() {
 }
 
 (async function () {
-  await connectToServer();
+  socket = await connectToServer();
   console.log("Connected to websocket.")
 
   _("#pc-username").innerHTML = `Welcome, ${usernameNoId}.`
@@ -26,7 +25,7 @@ async function connectToServer() {
   socket.emit("establish-connection", { username: usernameNoId })
 
   socket.onmessage = (message) => {
-    console.log(message.data);
+    SocketAPI.handleMessage(message);
   };
 })();
 /*
