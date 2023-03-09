@@ -333,10 +333,10 @@ app.post("/app-api/sendMsg", authenticateToken, (req, res) => {
 })
 
 const portAbove = process.env.portAbove;
-server.listen(port, () => {
+server.listen(portAbove, () => {
   console.log("\x1b[33mServer Running!")
   console.log("\x1b[31mThis is a development server, do not use this for hosting!\n")
-  console.log(`\x1b[0mRunning on:\nhttp://localhost:${port}\nhttps://chessapp.darthvader1925.repl.co (Public Host)`)
+  console.log(`\x1b[0mRunning on:\nhttp://localhost:${portAbove}\nhttps://chessapp.darthvader1925.repl.co (Public Host)`)
   console.log("WSS PORT: " + process.env.wssPort)
 })
 

@@ -16,6 +16,8 @@ function on(socket, d) {
     const name = d[0].name;
     const data = d[1];
 
+    console.log(name, data)
+
     switch (name) {
         case "establish-connection": {
             console.log("Established WSS connection " + socket.id + " " + data.username)
