@@ -160,7 +160,7 @@ app.get("/play", authenticateToken, (req, res) => {
 })
 
 app.post("/app-api/join-queue", authenticateToken, (req, res) => {
-  const user = req.body.user;
+  const user = res.user;
   if (user.replaceAll(" ", "") == "") return;
 
   queueUsers.push(user);

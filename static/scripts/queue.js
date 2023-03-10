@@ -8,7 +8,7 @@ async function connectToServer() {
   const socketProtocol = location.protocol === 'https:' ? 'wss' : 'ws';
   const socketUrl = `${socketProtocol}://${location.hostname}:${1025}`;
   // alert(socketUrl)
-  const ws = new WebSocket("wss://ghwosty-friendly-space-guide-qp4v9r75rw7h65x-1024.preview.app.github.dev");
+  const ws = new WebSocket(socketUrl);
 
   return new Promise((resolve, reject) => {
     const timer = setInterval(() => {
@@ -16,7 +16,7 @@ async function connectToServer() {
       if (ws.readyState === 1) {
         clearInterval(timer)
         ws["on"] = function (name, callback) {
-          ons.set(name, callback);
+          ons[name] = callback;
         }
         resolve(ws);
       }
@@ -27,19 +27,19 @@ async function connectToServer() {
 (async function () {
   try {
     socket = await connectToServer();
-    alert("Connected to websocket.")
 
     _("#pc-username").innerHTML = `Welcome, ${usernameNoId}.`
 
     socket.emit("establish-connection", { username: usernameNoId })
 
     socket.onmessage = (message) => {
-      SocketAPI.handleMessage(message);
+      SocketAPI.handleMessage(message.data);
     };
 
-    socket.on("update-queue", (data) => {
+    socket.on("update_queue", function (data) {
       console.log(data);
     })
+
   } catch (err) {
     alert(err);
   }
