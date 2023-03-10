@@ -37,7 +37,7 @@ async function connectToServer() {
     };
 
     socket.on("update_queue", (data) => {
-      console.dir(data);
+      console.dir(data.amount);
       _("#queue-amt").iText(data.amount + " users in queue")
     })
 

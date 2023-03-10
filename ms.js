@@ -45,7 +45,10 @@ wss["broadcast"] = function (name, data) {
 }
 
 wss["toRoom"] = function (room, name, data) {
-
+  const rooms = wssF.getRooms();
+  [...rooms.keys()].forEach((client) => {
+    client.send(JSON.stringify([{ name: name}, data]));
+  });
 }
 
 wss["rooms"] = {
@@ -178,7 +181,7 @@ app.post("/app-api/join-queue", authenticateToken, (req, res) => {
 
   if (arrayLength(queueUsers) == 2) {
     const id = tokenManager.createRandomId(26)
-    io.to("queue").emit("join_game", { gameId: id });
+    wss.toRoom("queue", "join_game", { gameId: id });
     ratings.calculateWinDrawLose("a", "hola", (data) => {
       console.dir(data);
       const match = new Match(id, queueUsers, queueUsers[0], queueUsers[1], data.win, data.draw, data.lose);
@@ -268,7 +271,7 @@ app.post("/app-api/move", authenticateToken, (req, res) => {
       if (status) matches.delete(room)
       res.send({ moved: moveStatus })
 
-      io.to(room).emit("recieve-move", { moveTo: req.body.moveTo, moving: req.body.moving, match: match, inCheck: match.board.inCheck() });
+      wss.toRoom(room, "recieve-move", { moveTo: req.body.moveTo, moving: req.body.moving, match: match, inCheck: match.board.inCheck() });
       return;
     })
 
@@ -281,7 +284,7 @@ app.post("/app-api/move", authenticateToken, (req, res) => {
       }
     }
 
-    if (moveStatus) io.to(room).emit("recieve-move", { moveTo: req.body.moveTo, moving: req.body.moving, match: match, inCheck: match.board.inCheck() });
+    if (moveStatus) wss.toRoom(room, "recieve-move", { moveTo: req.body.moveTo, moving: req.body.moving, match: match, inCheck: match.board.inCheck() });
 
     if (!gameStatus) res.send({ moved: moveStatus })
   }
@@ -320,7 +323,7 @@ app.post('/app-api/get-user-ratings', authenticateToken, (req, res) => {
 app.post("/app-api/leave-queue", authenticateToken, (req, res) => {
   if (queueUsers.length == 2) return;
   queueUsers = [];
-  io.emit("update_queue", { amount: arrayLength(queueUsers) });
+  wss.broadcast("update_queue", { amount: arrayLength(queueUsers) });
   res.send({ left: true })
 })
 
@@ -329,7 +332,7 @@ app.post("/app-api/sendMsg", authenticateToken, (req, res) => {
   const content = req.body.content;
 
   if (content.replaceAll(" ", "") == "") return;
-  io.to(rooms[from]).emit("recieve-msg", { content: content, from: from })
+  wss.toRoom(rooms[from], "recieve-msg", { content: content, from: from })
   res.status(200).send({ sent: true })
 })
 

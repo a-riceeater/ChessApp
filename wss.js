@@ -38,7 +38,6 @@ function deleteClient(ws) {
 
 function joinRoom(ws, name) {
     rooms.set(ws, name)
-    console.log("Someone joined room " + name)
 }
 
 function getRoomLength(room, cb) {
@@ -52,4 +51,8 @@ function getRoomLength(room, cb) {
     cb(length);
 }
 
-export default { setClient, on, deleteClient, joinRoom, getRoomLength }
+function getRooms() {
+    return rooms;
+}
+
+export default { setClient, on, deleteClient, joinRoom, getRoomLength, getRooms }
