@@ -2,7 +2,11 @@ const ons = [];
 
 WebSocket.prototype.emit = function (name, data) {
     console.log(JSON.stringify([{ name: name }, data]))
+    try {
     this.send(JSON.stringify([{ name: name }, data]));
+    } catch (e) {
+        console.error(e);
+    }
 }
 
 WebSocket.prototype.on = function (name, callback) {

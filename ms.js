@@ -362,6 +362,7 @@ wss.on("connection", (ws) => {
 
   // Sets
   wssF.setClient(ws, id)
+  console.log(id, "connected")
 
   ws.on('message', (data) => {
     console.log(data);
