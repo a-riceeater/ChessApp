@@ -27,7 +27,9 @@ async function connectToServer() {
     SocketAPI.handleMessage(message.data);
   };
 
-  socket.emit("establish-connection", { username: usernameNoId })
+  
+  // socket.emit("establish-connection", { username: usernameNoId })
+  socket.send(JSON.stringify([{ name: "establish-connection" }, { username: usernameNoId }]));
 
   socket.on("connection-established", () => {
     console.log("CONNECTION ESTABLISHED")
