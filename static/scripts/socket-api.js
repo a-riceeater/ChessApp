@@ -1,6 +1,7 @@
 const ons = [];
 
 WebSocket.prototype.emit = function (name, data) {
+    console.log(JSON.stringify([{ name: name }, data]))
     this.send(JSON.stringify([{ name: name }, data]));
 }
 
@@ -15,6 +16,6 @@ const SocketAPI = {
         const name = d[0].name;
         const data = d[1]
 
-        ons[name](data);
+        if (ons[name]) ons[name](data);
     }
 }

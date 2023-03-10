@@ -34,6 +34,10 @@ import wssF from './wss.js'
 import WebSocket from 'ws';
 const wss = new WebSocket.Server({ port: process.env.wssPort });
 
+WebSocket.prototype.emit = function (name, data) {
+  this.send(JSON.stringify([{ name: name }, data]));
+}
+
 const clients = new Map();
 const clientsI = new Map();
 
@@ -360,6 +364,7 @@ wss.on("connection", (ws) => {
   wssF.setClient(ws, id)
 
   ws.on('message', (data) => {
+    console.log(data);
     wssF.on(ws, JSON.parse(data));
   })
 

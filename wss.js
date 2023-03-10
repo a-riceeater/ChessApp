@@ -22,7 +22,8 @@ function on(socket, d) {
         case "establish-connection": {
             console.log("Established WSS connection " + socket.id + " " + data.username)
             ms.putSockets(data.username, id);
-            socket.emit("connection-established", {})
+            // socket.emit("connection-established", {})
+            socket.send(JSON.stringify([{ name: "connection-established"}, ""]));
         }
     }
 }
