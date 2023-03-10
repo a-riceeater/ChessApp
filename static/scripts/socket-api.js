@@ -13,7 +13,7 @@ const SocketAPI = {
     handleMessage: function (d) {
         d = JSON.parse(d);
         const name = d[0].name;
-        const data = JSON.stringify(d[1]);
+        const data = d[1]
 
         ons[name](data);
     }

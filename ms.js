@@ -13,7 +13,7 @@ import morgan from "morgan"
 const server = http.createServer(app);
 import { Server } from "socket.io";
 const io = new Server(server, { 'force new connection': true });
-// const favicon = require('serve-favicon');
+import favicon from 'serve-favicon';
 import rateLimit from 'express-rate-limit'
 //const helmet = require("helmet"); Use this if you want sequirty response headers (may cause bugs with code)
 const port = process.env.port; // Change this to proccess.env.portAbove if experiencing errors
@@ -137,6 +137,7 @@ app.use(express.static("static"))
 app.set('socketio', io);
 // app.use(morgan(':method :url :status :res[content-length] :response-time ms')) Use this if you want to see post and get logging information
 app.use(express.json())
+app.use(favicon(path.join(__dirname, 'static/images/pawn-black.png')))
 // app.use(helmet()) Use this if you want sequirty response headers (may cause bugs with code)
 
 function rp(p) {

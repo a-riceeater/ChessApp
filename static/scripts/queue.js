@@ -36,8 +36,15 @@ async function connectToServer() {
       SocketAPI.handleMessage(message.data);
     };
 
-    socket.on("update_queue", function (data) {
-      console.log(data);
+    socket.on("update_queue", (data) => {
+      console.dir(data);
+      _("#queue-amt").iText(data.amount + " users in queue")
+    })
+
+    socket.on("join_game", (data) => {
+      const gameId = data.gameId;
+      sessionStorage.setItem("gameId", gameId)
+      window.location = '/play/' + gameId;
     })
 
   } catch (err) {
