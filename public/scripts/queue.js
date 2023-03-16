@@ -60,18 +60,12 @@ socket.on("join_game", (data) => {
 })
 
 fetch('/app-api/get-queue-members', { headers: { 'Content-Type': 'application/json' } })
-  .then((data) => { return data.json() })
-  .then((data) => {
-    _("#queue-amt").iText(data.amount + " users in queue")
-  })
+  .then((data) => { return data.json(); })
+  .then((data) => _("#queue-amt").iText(data.amount + " users in queue"))
 
 fetch('/app-api/get-rating', { headers: { 'Content-Type': 'application/json' } })
-  .then((data) => {
-    return data.json();
-  })
-  .then((data) => {
-    _("#pc-username").innerText += " (" + data.rating + ")";
-  })
+  .then((data) => { return data.json(); })
+  .then((data) => _("#pc-username").innerText += " (" + data.rating + ")")
 
 _("#reset").addEventListener("click", (e) => {
   const p = confirm("This will reset your data. Are you sure?")

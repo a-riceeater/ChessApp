@@ -224,9 +224,6 @@ setTimeout(() => {
   setTimeout(() => _("#loading-screen").hide(), 1000);
 }, getRand(1000, 5000))
 
-window.addEventListener("error", (e) => {
-  console.error(e.message + " " + e.lineno + " " + e.source);
-})
 
 async function postData(url = '', body = {}) {
   const response = await fetch(url, {
