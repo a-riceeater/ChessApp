@@ -31,8 +31,8 @@ import tokenManager from './server/tokens.js'
 
 import wssF from './wss.js'
 
-import WebSocket from 'ws';
-const wss = new WebSocket.Server({ port: process.env.wssPort });
+import { WebSocketServer } from 'ws';
+const wss = new WebSocketServer({ port: process.env.wssPort });
 
 const clients = new Map();
 const clientsI = new Map();

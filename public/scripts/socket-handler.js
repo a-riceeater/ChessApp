@@ -1,8 +1,8 @@
 _(".loading-text").innerHTML = `<p>Establishing WSS Connection..</p>`
 var rating;
-var socket;
+var socket = io();
 
-async function connectToServer() {
+/*async function connectToServer() {
   const ws = new WebSocket('ws://' + window.location.origin.replace("http://", "") + ":1025");
   socket = ws;
   return new Promise((resolve, reject) => {
@@ -13,7 +13,7 @@ async function connectToServer() {
       }
     }, 10);
   });
-}
+}*/
 
 async function $src(callback) {
   callback()
@@ -64,6 +64,9 @@ socket.on("game-win", (data) => {
 socket.on("game-end", (data) => {
   console.dir(data);
   const drawReason = data.reason;
+  _(".gameDraw").css("scale", 1);
+  _("#shade").css("scale", 1);
+  _("#draw-reason").iTet(drawReason);
 })
 
 socket.on("recieve-msg", (data) => {

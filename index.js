@@ -105,7 +105,7 @@ const rooms = [];
 const playing = [];
 
 app.use(cors(corsOptions));
-app.use(express.static("static"))
+app.use(express.static("public"))
 app.set('socketio', io);
 // app.use(morgan(':method :url :status :res[content-length] :response-time ms')) Use this if you want to see post and get logging information
 app.use(express.json())
@@ -196,6 +196,8 @@ app.post("/app-api/move", authenticateToken, (req, res) => {
   const room = req.body.room;
   const match = matches.get(room);
 
+  if (!match.turn) match.turn = user;
+
   if (match.turn != user) return res.send({ moved: false })
 
   console.log(`${match.turn} moving from ${req.body.from} to ${req.body.to}`)
@@ -218,6 +220,7 @@ app.post("/app-api/move", authenticateToken, (req, res) => {
     moveStatus = true;
   } catch (err) {
     console.error("invalid move! (" + move + ")")
+    console.error(err);
     moveStatus = false;
   }
   finally {
@@ -227,7 +230,7 @@ app.post("/app-api/move", authenticateToken, (req, res) => {
       console.log(status, reason)
       gameStatus = true;
       if (reason == "checkmate") io.to(room).emit("game-win", { winner: match.turn, reason: reason });
-      else io.to(room).emit("game-end", { reason: reason, status: status })
+      if (status && reason != "checkmate") io.to(room).emit("game-end", { reason: reason, status: status })
 
       ratings.changeUser(match.turn, match.winAmt, "add");
       for (let i = 0; i < match.players.length; i++) {
@@ -289,6 +292,12 @@ app.post('/app-api/get-user-ratings', authenticateToken, (req, res) => {
   })
 })
 
+app.get('/app-api/get-rating', authenticateToken, (req, res) => {
+  ratings.getRating(res.user, (rating) => {
+    res.send({ rating: rating });
+  })
+})
+
 app.post("/app-api/leave-queue", authenticateToken, (req, res) => {
   if (queueUsers.length == 2) return;
   queueUsers = [];
@@ -338,7 +347,7 @@ io.on("connection", (socket) => {
       io.emit("update_queue", { amount: arrayLength(queueUsers) });
     }
 
-    Object.values(sockets).forEach(function (key) {
+    Object.values(sockets).forEach(function(key) {
       if (key == socket.id) {
         console.log("Removing " + key + " from socket array.")
         delete sockets[key]

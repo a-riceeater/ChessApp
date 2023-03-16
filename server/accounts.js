@@ -13,30 +13,30 @@ dotenv.config();
 accountDb.run(`CREATE TABLE IF NOT EXISTS accounts(username TEXT NOT NULL, password TEXT NOT NULL)`)
 
 export default {
-    register: function (username, password, callback) {
-        accountDb.get(`SELECT * FROM accounts WHERE username = ?`, [username], (err, row) => {
-            if (err) throw err;
-            if (row != null) return callback(false);
+  register: function(username, password, callback) {
+    accountDb.get(`SELECT * FROM accounts WHERE username = ?`, [username], (err, row) => {
+      if (err) throw err;
+      if (row != null) return callback(false);
 
-            let insertdata = accountDb.prepare("INSERT INTO accounts VALUES(?, ?)");
-            insertdata.run(encryptData(username), encryptData(password))
-            insertdata.finalize();
+      let insertdata = accountDb.prepare("INSERT INTO accounts VALUES(?, ?)");
+      insertdata.run(encryptData(username), encryptData(password))
+      insertdata.finalize();
 
-            ratings.addUser(username, () => {
-                callback(true);
-            });
-        })
-    },
-    login: function (email, password, callback) {
+      ratings.addUser(username, () => {
+        callback(true);
+      });
+    })
+  },
+  login: function(email, password, callback) {
 
-    }
+  }
 }
 
 function encryptData(data) {
-    return CryptoJS.AES.encrypt(data, process.env.accountEncryptionKey).toString();
+  return CryptoJS.AES.encrypt(data, process.env.accountEncryptionKey).toString();
 }
 
 function decryptData(data) {
-    const bytes = CryptoJS.AES.decrypt(data, process.env.accountEncryptionKey);
-    return bytes.toString(CryptoJS.enc.Utf8);
+  const bytes = CryptoJS.AES.decrypt(data, process.env.accountEncryptionKey);
+  return bytes.toString(CryptoJS.enc.Utf8);
 }

@@ -2,20 +2,19 @@ const username = localStorage.getItem("username")
 var usernameNoId;
 if (username) usernameNoId = localStorage.getItem("username").replace("." + username.split(".")[1], "")
 // const socket = io();
-var socket;
+const socket = io();
 
 async function connectToServer() {
   const socketProtocol = location.protocol === 'https:' ? 'wss' : 'ws';
   const socketUrl = `${socketProtocol}://${location.hostname}:${1025}`;
-  // alert(socketUrl)
-  const ws = new WebSocket("wss://ghwosty-friendly-space-guide-qp4v9r75rw7h65x-1024.preview.app.github.dev");
+  const ws = new WebSocket(socketUrl);
 
   return new Promise((resolve, reject) => {
     const timer = setInterval(() => {
-      // document.body.innerHTML = ws.readyState;
+      document.body.innerHTML = ws.readyState;
       if (ws.readyState === 1) {
         clearInterval(timer)
-        ws["on"] = function (name, callback) {
+        ws["on"] = function(name, callback) {
           ons.set(name, callback);
         }
         resolve(ws);
@@ -24,10 +23,10 @@ async function connectToServer() {
   });
 }
 
-(async function () {
+/*(async function() {
   try {
     socket = await connectToServer();
-    alert("Connected to websocket.")
+   // alert("Connected to websocket.")
 
     _("#pc-username").innerHTML = `Welcome, ${usernameNoId}.`
 
@@ -44,8 +43,11 @@ async function connectToServer() {
     alert(err);
   }
 
-})();
-/*
+})();*/
+
+_("#pc-username").innerHTML = usernameNoId + " "
+socket.emit("establish-connection", { username: usernameNoId })
+
 socket.on("update_queue", (data) => {
   console.dir(data);
   _("#queue-amt").iText(data.amount + " users in queue")
@@ -55,7 +57,7 @@ socket.on("join_game", (data) => {
   const gameId = data.gameId;
   sessionStorage.setItem("gameId", gameId)
   window.location = '/play/' + gameId;
-})*/
+})
 
 fetch('/app-api/get-queue-members', { headers: { 'Content-Type': 'application/json' } })
   .then((data) => { return data.json() })
@@ -63,6 +65,13 @@ fetch('/app-api/get-queue-members', { headers: { 'Content-Type': 'application/js
     _("#queue-amt").iText(data.amount + " users in queue")
   })
 
+fetch('/app-api/get-rating', { headers: { 'Content-Type': 'application/json' } })
+  .then((data) => {
+    return data.json();
+  })
+  .then((data) => {
+    _("#pc-username").innerText += " (" + data.rating + ")";
+  })
 
 _("#reset").addEventListener("click", (e) => {
   const p = confirm("This will reset your data. Are you sure?")

@@ -232,7 +232,7 @@
     font-size: 13.5px;
 }
 
-.gameCheckmate {
+.gameCheckmate, .gameDraw {
     position: fixed;
     z-index: 999;
     top: 50%;
@@ -249,7 +249,7 @@
     scale: 0;
 }
 
-.gameCheckmate .top {
+.gameCheckmate .top, .gameDraw .top {
     background-color: green;
     position: absolute;
     top: 0%;
