@@ -88,6 +88,15 @@
     margin-top: 5px;
 }
 
+#user-black-time, #user-white-time {
+  margin-left: 15px;
+  vertical-align: middle;
+  display: flex;
+  align-items: center;
+  margin-top: 5px;
+  font-size: 18px;
+}
+
 .info {
     background-color: rgb(0, 0, 0, 0.5);
     height: 85vh;

@@ -1,4 +1,4 @@
-var selectedPiece, match, opponent, color;
+var selectedPiece, opponent;
 
 const chessboardRows = document.querySelectorAll('.row');
 
@@ -44,6 +44,7 @@ try {
             return
           } else {
             match = data.match;
+            incrimentTime();
 
             for (let i = 0; i < match.players.length; i++) {
               if (match.players[i] == usernameNoId) continue;
@@ -219,11 +220,56 @@ _("#chatbox").addEventListener("keydown", (e) => {
   }
 })
 
+var minYou = 4;
+var secYou = 59;
+
+var minThem = 4;
+var secThem = 59;
+
+function incrimentTime() {
+  setTimeout(() => {
+    if (match.turn == usernameNoId) {
+      if (secYou == 0) {
+        minYou--;
+        secYou = 59;
+      } 
+      else {
+        secYou--;
+      }
+
+      if (color == "black") _("#user-black-time").iText(`${minYou}:${secYou.toString().length == 1 ? "0" + secYou: secYou}`)
+      if (color == "white") _("#user-white-time").iText(`${minYou}:${secYou.toString().length == 1 ? "0" + secYou : secYou}`)
+
+      if (minYou == 0 && secYou == 0) {
+        postData('/app-api/game-lose', { time: `${minYou}:${secYou.toString().length == 1 ? "0" + secYou : secYou}` })
+          .then((data) => {
+            console.dir(data);
+          })
+        return;
+      }
+
+    }
+    else {
+      if (secThem == 0) {
+        minThem--;
+        secThem = 59;
+      } 
+      else {
+        secThem--;
+      }
+
+      if (color == "black") _("#user-white-time").iText(`${minThem}:${secThem.toString().length == 1 ? "0" + secThem: secThem}`)
+      if (color == "white") _("#user-black-time").iText(`${minThem}:${secThem.toString().length == 1 ? "0" + secThem : secThem}`)
+
+    }
+    incrimentTime();
+  }, 1000)
+}
+
 setTimeout(() => {
   _("#loading-screen").css("opacity", 0);
   setTimeout(() => _("#loading-screen").hide(), 1000);
 }, getRand(1000, 5000))
-
 
 async function postData(url = '', body = {}) {
   const response = await fetch(url, {

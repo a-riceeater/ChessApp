@@ -191,12 +191,12 @@ app.post("/app-api/connect", (req, res) => {
 
 import winHandler from './server/winHandler.js'
 app.post("/app-api/move", authenticateToken, (req, res) => {
-  const user = req.body.user;
+  const user = res.user;
   const socket = io.sockets.sockets.get(sockets[user]);
   const room = req.body.room;
   const match = matches.get(room);
 
-  if (!match.turn) match.turn = user;
+  if (match.turn == null) match.turn = user;
 
   if (match.turn != user) return res.send({ moved: false })
 
@@ -312,6 +312,11 @@ app.post("/app-api/sendMsg", authenticateToken, (req, res) => {
   if (content.replaceAll(" ", "") == "") return;
   io.to(rooms[from]).emit("recieve-msg", { content: content, from: from })
   res.status(200).send({ sent: true })
+})
+
+app.post("/app-api/game-lose", authenticateToken, (req, res) => {
+  const loser = res.user;
+  io.to(rooms[loser]).emit("game-loss-time", { loser: loser, loserTime: req.body.time });
 })
 
 server.listen(port, () => {

@@ -1,3 +1,5 @@
+var currentMove, match, color;
+
 _(".loading-text").innerHTML = `<p>Establishing WSS Connection..</p>`
 var rating;
 var socket = io();
@@ -67,6 +69,28 @@ socket.on("game-end", (data) => {
   _(".gameDraw").css("scale", 1);
   _("#shade").css("scale", 1);
   _("#draw-reason").iTet(drawReason);
+})
+
+socket.on("game-loss-time", (data) => {
+  console.dir(data);
+  const loser = data.loser;
+
+  if (loser == usernameNoId) _("#winslos").iText("You lost!")
+  _("#win-reason").iText("By timeout")
+
+  if (loser != usernameNoId) {
+    if (color == "black") _("#user-white-time").iText(data.time);
+    else _("#user-black-time").iText(data.time)
+  } else {
+    if (color == "black") _("#user-black-time").iText(data.time);
+    else _("#user-white-time").iText(data.time)
+  }
+
+  
+
+  _(".gameCheckmate").css("scale", 1)
+  _("#shade").css("scale", 1)
+  
 })
 
 socket.on("recieve-msg", (data) => {
