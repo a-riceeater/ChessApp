@@ -1,4 +1,4 @@
-var currentMove, match, color;
+var currentMove, match, color, gameEnded;
 
 _(".loading-text").innerHTML = `<p>Establishing WSS Connection..</p>`
 var rating;
@@ -56,6 +56,7 @@ socket.on("game-win", (data) => {
 
   _(".gameCheckmate").css("scale", 1)
   _("#shade").css("scale", 1)
+  gameEnded = true;
 
   /*if (winner == usernameNoId) {
     rating = data.winAmt
@@ -65,6 +66,7 @@ socket.on("game-win", (data) => {
 // Game end because of draw, stalemate, etc.
 socket.on("game-end", (data) => {
   console.dir(data);
+  gameEnd = true;
   const drawReason = data.reason;
   _(".gameDraw").css("scale", 1);
   _("#shade").css("scale", 1);
@@ -74,6 +76,7 @@ socket.on("game-end", (data) => {
 socket.on("game-loss-time", (data) => {
   console.dir(data);
   const loser = data.loser;
+  gameEnd = true;
 
   if (loser == usernameNoId) _("#winslos").iText("You lost!")
   _("#win-reason").iText("By timeout")
@@ -86,11 +89,18 @@ socket.on("game-loss-time", (data) => {
     else _("#user-white-time").iText(data.time)
   }
 
-  
-
   _(".gameCheckmate").css("scale", 1)
   _("#shade").css("scale", 1)
   
+})
+
+socket.on("game-resign", (data) => {
+  console.dir(data);
+  gameEnd = true;
+  const resign = data.user;
+
+  if (resign == usernameNoId) _("#winslos").iText("You lost!")
+  _("#win-reason").iText("By resign")
 })
 
 socket.on("recieve-msg", (data) => {

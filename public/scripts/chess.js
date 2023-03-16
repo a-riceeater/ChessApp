@@ -44,6 +44,9 @@ try {
             return
           } else {
             match = data.match;
+
+            if (match.white == usernameNoId) color = "white"
+            else color = "black"
             incrimentTime();
 
             for (let i = 0; i < match.players.length; i++) {
@@ -51,10 +54,7 @@ try {
               opponent = match.players[i];
             }
 
-            if (match.white == usernameNoId) { _("#gc-value").iText("White"); color = "white" }
-            if (match.black == usernameNoId) { _("#gc-value").iText("Black"); color = "black" }
 
-            _("#opponent-name").iText(opponent);
             _("#win-amt").iText("+" + match.winAmt)
             _("#lose-amt").iText("+" + match.loseAmt)
 
@@ -260,7 +260,6 @@ function incrimentTime() {
 
       if (color == "black") _("#user-white-time").iText(`${minThem}:${secThem.toString().length == 1 ? "0" + secThem : secThem}`)
       if (color == "white") _("#user-black-time").iText(`${minThem}:${secThem.toString().length == 1 ? "0" + secThem : secThem}`)
-
     }
 
     if (match.turn == usernameNoId) {
@@ -277,6 +276,15 @@ function incrimentTime() {
     incrimentTime();
   }, 1000)
 }
+
+_("#resign-btn").addEventListener("click", () => {
+  if (confirm("Resign?")) {
+    postData('/app-api/resign-game')
+      .then((data) => {
+        console.dir(data);
+      })
+  }
+})
 
 setTimeout(() => {
   _("#loading-screen").css("opacity", 0);

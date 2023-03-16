@@ -153,6 +153,7 @@ app.post("/app-api/join-queue", authenticateToken, (req, res) => {
     ratings.calculateWinDrawLose("a", "hola", (data) => {
       console.dir(data);
       const match = new Match(id, queueUsers, queueUsers[0], queueUsers[1], data.win, data.draw, data.lose);
+      console.log(match);
       matches.set(queueUsers, match)
       matches.set(id, match);
       queueUsers = [];
@@ -321,6 +322,13 @@ app.post("/app-api/game-lose", authenticateToken, (req, res) => {
   io.to(rooms[loser]).emit("game-loss-time", { loser: loser, loserTime: req.body.time });
 })
 
+app.post("/app-api/resign-game", authenticateToken, (req, res) => {
+  // const socket = io.sockets.sockets.get(sockets[res.user]);
+  const match = matches.get(rooms[res.user])
+
+  io.to(rooms[res.user]).emit("game-resign", { user: res.user });
+})
+
 server.listen(port, () => {
   console.log("\x1b[33mServer Running!")
   console.log("\x1b[31mThis is a development server, do not use this for hosting!\n")
@@ -345,7 +353,6 @@ io.on("connection", (socket) => {
           console.log("MATCH THAT " + key + " IS PLAYING IN HAS DISCONNECTED.")
 
           // matches.remove()
-          console.log(matches.get(socket.rooms), socket.rooms);
         }
       }
     })
