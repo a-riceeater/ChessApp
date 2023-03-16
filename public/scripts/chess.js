@@ -262,6 +262,15 @@ function incrimentTime() {
       if (color == "white") _("#user-black-time").iText(`${minThem}:${secThem.toString().length == 1 ? "0" + secThem : secThem}`)
 
     }
+
+    if (match.turn = usernameNoId) {
+      if (color == "black") _("#user-black-time").classList.add("timing")
+      else _("#user-white-time").classList.add("timing")
+    }
+    else {
+      if (color == "black") _("#user-black-time").classList.remove("timing")
+      else _("#user-white-time").classList.remove("timing")
+    }
     incrimentTime();
   }, 1000)
 }

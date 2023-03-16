@@ -95,6 +95,11 @@
   align-items: center;
   margin-top: 5px;
   font-size: 18px;
+  opacity: 0.5;
+}
+
+.timing {
+  opacity: 1 !important;
 }
 
 .info {
