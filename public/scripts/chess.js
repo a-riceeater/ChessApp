@@ -70,34 +70,34 @@ try {
               _("#user-black-name").iText(opponent)
 
               postData('/app-api/get-user-ratings', { user: usernameNoId })
-              .then((data) => {
-                _("#user-white-rating").iText(`(${data.rating})`);
-              })
+                .then((data) => {
+                  _("#user-white-rating").iText(`(${data.rating})`);
+                })
 
               postData('/app-api/get-user-ratings', { user: opponent })
-              .then((data) => {
-                _("#user-black-rating").iText(`(${data.rating})`);
-              })
+                .then((data) => {
+                  _("#user-black-rating").iText(`(${data.rating})`);
+                })
             }
             else {
               console.log("AM BLACK")
               _("#user-black-name").iText(usernameNoId)
-               _("#user-white-name").iText(opponent)
+              _("#user-white-name").iText(opponent)
 
-               postData('/app-api/get-user-ratings', { user: opponent })
-              .then((data) => {
-                _("#user-white-rating").iText(`(${data.rating})`);
-              })
+              postData('/app-api/get-user-ratings', { user: opponent })
+                .then((data) => {
+                  _("#user-white-rating").iText(`(${data.rating})`);
+                })
 
               postData('/app-api/get-user-ratings', { user: usernameNoId })
-              .then((data) => {
-                _("#user-black-rating").iText(`(${data.rating})`);
-              })
+                .then((data) => {
+                  _("#user-black-rating").iText(`(${data.rating})`);
+                })
             }
 
             _("#gt-value").iText(match.turn)
 
-      
+
 
             setTimeout(() => _(".loading-text").innerHTML = `<p>Connected to room...</p>`, 300)
           }
@@ -232,12 +232,12 @@ function incrimentTime() {
       if (secYou == 0) {
         minYou--;
         secYou = 59;
-      } 
+      }
       else {
         secYou--;
       }
 
-      if (color == "black") _("#user-black-time").iText(`${minYou}:${secYou.toString().length == 1 ? "0" + secYou: secYou}`)
+      if (color == "black") _("#user-black-time").iText(`${minYou}:${secYou.toString().length == 1 ? "0" + secYou : secYou}`)
       if (color == "white") _("#user-white-time").iText(`${minYou}:${secYou.toString().length == 1 ? "0" + secYou : secYou}`)
 
       if (minYou == 0 && secYou == 0) {
@@ -253,23 +253,26 @@ function incrimentTime() {
       if (secThem == 0) {
         minThem--;
         secThem = 59;
-      } 
+      }
       else {
         secThem--;
       }
 
-      if (color == "black") _("#user-white-time").iText(`${minThem}:${secThem.toString().length == 1 ? "0" + secThem: secThem}`)
+      if (color == "black") _("#user-white-time").iText(`${minThem}:${secThem.toString().length == 1 ? "0" + secThem : secThem}`)
       if (color == "white") _("#user-black-time").iText(`${minThem}:${secThem.toString().length == 1 ? "0" + secThem : secThem}`)
 
     }
 
-    if (match.turn = usernameNoId) {
+    if (match.turn == usernameNoId) {
       if (color == "black") _("#user-black-time").classList.add("timing")
       else _("#user-white-time").classList.add("timing")
+
+      if (color == "black") _("#user-white-time").classList.remove("timing");
+      if (color == "white") _("#user-black-time").classList.remove("timing")
     }
     else {
-      if (color == "black") _("#user-black-time").classList.remove("timing")
-      else _("#user-white-time").classList.remove("timing")
+      if (color == "black") { _("#user-black-time").classList.remove("timing"); _("#user-white-time").classList.add("timing") }
+      else { _("#user-white-time").classList.remove("timing"); _("#user-black-time").classList.add("timing") }
     }
     incrimentTime();
   }, 1000)

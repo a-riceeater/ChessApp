@@ -196,6 +196,8 @@ app.post("/app-api/move", authenticateToken, (req, res) => {
   const room = req.body.room;
   const match = matches.get(room);
 
+  if (match == null) return res.send({ error: "Invalid match object" });
+
   if (match.turn == null) match.turn = user;
 
   if (match.turn != user) return res.send({ moved: false })
@@ -343,6 +345,7 @@ io.on("connection", (socket) => {
           console.log("MATCH THAT " + key + " IS PLAYING IN HAS DISCONNECTED.")
 
           // matches.remove()
+          console.log(matches.get(socket.rooms), socket.rooms);
         }
       }
     })
