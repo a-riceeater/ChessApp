@@ -344,6 +344,7 @@ var movePiece;
 _(".piece", true).forEach((piece) => {
   piece.addEventListener("mousedown", (e) => {
     e.preventDefault();
+    if (!piece.src.includes(color)) return;
     piece.classList.add("moving");
     movePiece = piece;
     mouseDown = true;

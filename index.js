@@ -372,7 +372,7 @@ io.on("connection", (socket) => {
           user = key;
           console.log("MATCH THAT " + key + " IS PLAYING IN HAS DISCONNECTED.")
 
-          const match = matches.get(user)
+          /*const match = matches.get(user)
           ratings.changeUser(user, match.winAmt, "sub");
           for (let i = 0; i < match.players.length; i++) {
             if (match.players[i] != user) {
@@ -380,7 +380,8 @@ io.on("connection", (socket) => {
             }
           }
           io.to(match.id).emit("game-resign", { user: user });
-          matches.delete(matches.get(user).id);
+          matches.delete(matches.get(user).id);*/
+          // ISSUE - Match is getting deleted when started because users disconnect socket from the queue page.
         }
       }
     })
