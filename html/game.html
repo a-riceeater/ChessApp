@@ -12,11 +12,11 @@
 <body>
     <div id="user-black" class="user">
         <img src="../images/person.png" alt="" srcset="" height="30px" width="30px">
-        <span id="user-black-name">Swee</span>
+        <span id="user-black-name">u1</span>
         <span id="user-black-rating">(100)</span>
-        <span id="user-black-time">5:00</span>
+        <span id="user-black-time">10:00</span>
     </div>
-    <div class="chessboard">
+    <div class="chessboard" id="chessboard-white">
         <div class="row">
             <div class="square white"><img src="../images/rook-black.png" id="r1" class="piece"></div>
             <div class="square wood-brown"><img src="../images/knight-black.png" id="n1" class="piece"></div>
@@ -99,15 +99,101 @@
             <div class="square white"><img src="../images/knight-white.png" class="piece" id="N2"></div>
             <div class="square wood-brown"><img src="../images/rook-white.png" class="piece" id="R2"></div>
         </div>
-        
+    </div>
 
+  <div class="chessboard" id="chessboard-black">
+
+        <div class="row">
+            <div class="square white"><img src="../images/rook-white.png" class="piece" id="R1"></div>
+            <div class="square wood-brown"><img src="../images/knight-white.png" class="piece" id="N1"></div>
+            <div class="square white"><img src="../images/bishop-white.png" class="piece" id="B1"></div>
+            <div class="square white"><img src="../images/queen-white.png" class="piece" id="Q"></div>
+            <div class="square wood-brown"><img src="../images/king-white.png" class="piece" id="K"></div>
+            <div class="square wood-brown"><img src="../images/bishop-white.png" class="piece" id="B2"></div>
+            <div class="square white"><img src="../images/knight-white.png" class="piece" id="N2"></div>
+            <div class="square wood-brown"><img src="../images/rook-white.png" class="piece" id="R2"></div>
+        </div>
+
+    <div class="row">
+            <div class="square wood-brown"><img src="../images/pawn-white.png" class="piece" id="P1"></div>
+            <div class="square white"><img src="../images/pawn-white.png" class="piece" id="P2"></div>
+            <div class="square wood-brown"><img src="../images/pawn-white.png" class="piece" id="P3"></div>
+            <div class="square white"><img src="../images/pawn-white.png" class="piece" id="P4"></div>
+            <div class="square wood-brown"><img src="../images/pawn-white.png" class="piece" id="P5"></div>
+            <div class="square white"><img src="../images/pawn-white.png" class="piece" id="P6"></div>
+            <div class="square wood-brown"><img src="../images/pawn-white.png" class="piece" id="P7"></div>
+            <div class="square white"><img src="../images/pawn-white.png" class="piece" id="P8"></div>
+        </div>
+        
+        <div class="row">
+            <div class="square white"></div>
+            <div class="square wood-brown"></div>
+            <div class="square white"></div>
+            <div class="square wood-brown"></div>
+            <div class="square white"></div>
+            <div class="square wood-brown"></div>
+            <div class="square white"></div>
+            <div class="square wood-brown"></div>
+        </div>
+        <div class="row">
+            <div class="square wood-brown"></div>
+            <div class="square white"></div>
+            <div class="square wood-brown"></div>
+            <div class="square white"></div>
+            <div class="square wood-brown"></div>
+            <div class="square white"></div>
+            <div class="square wood-brown"></div>
+            <div class="square white"></div>
+        </div>
+        <div class="row">
+            <div class="square wood-brown"></div>
+            <div class="square white"></div>
+            <div class="square wood-brown"></div>
+            <div class="square white"></div>
+            <div class="square wood-brown"></div>
+            <div class="square white"></div>
+            <div class="square wood-brown"></div>
+            <div class="square white"></div>
+        </div>
+        <div class="row">
+            <div class="square wood-brown"></div>
+            <div class="square white"></div>
+            <div class="square wood-brown"></div>
+            <div class="square white"></div>
+            <div class="square wood-brown"></div>
+            <div class="square white"></div>
+            <div class="square wood-brown"></div>
+            <div class="square white"></div>
+        </div>
+        <div class="row">
+            <div class="square wood-brown"><img src="../images/pawn-black.png" id="p1" class="piece"></div>
+            <div class="square white"><img src="../images/pawn-black.png" id="p2" class="piece"></div>
+            <div class="square wood-brown"><img src="../images/pawn-black.png" id="p3" class="piece"></div>
+            <div class="square white"><img src="../images/pawn-black.png" id="p4" class="piece"></div>
+            <div class="square wood-brown"><img src="../images/pawn-black.png" id="p5" class="piece"></div>
+            <div class="square white"><img src="../images/pawn-black.png" id="p6" class="piece"></div>
+            <div class="square wood-brown"><img src="../images/pawn-black.png" id="p7" class="piece"></div>
+            <div class="square white"><img src="../images/pawn-black.png" id="p8" class="piece"></div>
+        </div>
+
+    <div class="row">
+            <div class="square white"><img src="../images/rook-black.png" id="r1" class="piece"></div>
+            <div class="square wood-brown"><img src="../images/knight-black.png" id="n1" class="piece"></div>
+            <div class="square white"><img src="../images/bishop-black.png" id="b1" class="piece"></div>
+            <div class="square white"><img src="../images/queen-black.png" id="q" class="piece"></div>
+            <div class="square wood-brown"><img src="../images/king-black.png" id="k" class="piece"></div>
+            <div class="square wood-brown"><img src="../images/bishop-black.png" id="b2" class="piece"></div>
+            <div class="square white"><img src="../images/knight-black.png" id="n2" class="piece"></div>
+            <div class="square wood-brown"><img src="../images/rook-black.png" id="r2" class="piece"></div>
+        </div>
+        
     </div>
 
     <div id="user-white" class="user">
         <img src="../images/person.png" alt="" srcset="" height="30px" width="30px">
-        <span id="user-white-name">Ewiwa</span>
+        <span id="user-white-name">u2</span>
         <span id="user-white-rating">(3200)</span>
-        <span id="user-white-time">5:00</span>
+        <span id="user-white-time">10:00</span>
     </div>
 
 

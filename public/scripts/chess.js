@@ -1,15 +1,13 @@
+window.addEventListener("error", (e) => {
+  alert(e.message)
+})
+
 var selectedPiece, opponent;
-
-const chessboardRows = document.querySelectorAll('.row');
-
-// Array of characters representing the columns on the chessboard
 const columns = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
 
-// Loop through each row
-for (let i = 0; i < chessboardRows.length; i++) {
-  const squares = chessboardRows[i].querySelectorAll('.square');
 
-  // Loop through each square in the row
+/*for (let i = 0; i < chessboardRows.length; i++) {
+  const squares = chessboardRows[i].querySelectorAll('.square');
   for (let j = 0; j < squares.length; j++) {
     const column = columns[j];
     const row = 8 - i;
@@ -19,7 +17,7 @@ for (let i = 0; i < chessboardRows.length; i++) {
     squares[j].setAttribute('id', id);
   }
 }
-
+*/
 const username = localStorage.getItem("username")
 var usernameNoId;
 if (username) usernameNoId = username;
@@ -44,63 +42,101 @@ try {
             return
           } else {
             match = data.match;
+            var isBlackOnBottom = false;
 
             if (match.white == usernameNoId) color = "white"
             else color = "black"
-            incrimentTime();
 
+            if (color == "black") {
+              _("#chessboard-white").remove();
+
+              isBlackOnBottom = true;
+            } else {
+              _("#chessboard-black").remove();
+            }
+
+            /*
+            for (let i = 0; i < chessboardRows.length; i++) {
+  const squares = chessboardRows[i].querySelectorAll('.square');
+  for (let j = 0; j < squares.length; j++) {
+    const column = columns[j];
+    const row = 8 - i;
+    const id = column + row;
+
+    // Set the id of the square to its location on the chessboard
+    squares[j].setAttribute('id', id);
+  }
+}*/
+        const chessboardRows = document.querySelectorAll(isBlackOnBottom ? "#chessboard-black > .row" : "#chessboard-white > .row")
+
+            for (let i = 0; i < chessboardRows.length; i++) {
+  const squares = chessboardRows[i].querySelectorAll('.square');
+  const row = isBlackOnBottom ? i + 1 : 8 - i;
+
+  // Loop through each square in the row
+  for (let j = 0; j < squares.length; j++) {
+    const column = columns[j];
+    const id = column + row;
+
+    // Set the id of the square to its location on the chessboard
+    squares[j].setAttribute('id', id);
+  }
+}
             for (let i = 0; i < match.players.length; i++) {
               if (match.players[i] == usernameNoId) continue;
               opponent = match.players[i];
             }
-
-
-            _("#win-amt").iText("+" + match.winAmt)
-            _("#lose-amt").iText("+" + match.loseAmt)
-
-            var draw;
-            if (match.drawAmt.toString().includes("-")) draw = match.drawAmt;
-            else draw = "+" + match.drawAmt;
-
-            _("#draw-amt").iText(draw)
-
-            if (color == "white") {
-              console.log("AM WHITE")
-              _("#user-white-name").iText(usernameNoId)
-              _("#user-black-name").iText(opponent)
-
-              postData('/app-api/get-user-ratings', { user: usernameNoId })
-                .then((data) => {
-                  _("#user-white-rating").iText(`(${data.rating})`);
-                })
-
-              postData('/app-api/get-user-ratings', { user: opponent })
-                .then((data) => {
-                  _("#user-black-rating").iText(`(${data.rating})`);
-                })
-            }
-            else {
-              console.log("AM BLACK")
-              _("#user-black-name").iText(usernameNoId)
-              _("#user-white-name").iText(opponent)
-
-              postData('/app-api/get-user-ratings', { user: opponent })
-                .then((data) => {
-                  _("#user-white-rating").iText(`(${data.rating})`);
-                })
-
-              postData('/app-api/get-user-ratings', { user: usernameNoId })
-                .then((data) => {
-                  _("#user-black-rating").iText(`(${data.rating})`);
-                })
-            }
-
-            _("#gt-value").iText(match.turn)
-
-
-
-            setTimeout(() => _(".loading-text").innerHTML = `<p>Connected to room...</p>`, 300)
+            incrimentTime();
           }
+
+
+
+          _("#win-amt").iText("+" + match.winAmt)
+          _("#lose-amt").iText("+" + match.loseAmt)
+
+          var draw;
+          if (match.drawAmt.toString().includes("-")) draw = match.drawAmt;
+          else draw = "+" + match.drawAmt;
+
+          _("#draw-amt").iText(draw)
+
+          if (color == "white") {
+            console.log("AM WHITE")
+            _("#user-white-name").iText(usernameNoId)
+            _("#user-black-name").iText(opponent)
+
+            postData('/app-api/get-user-ratings', { user: usernameNoId })
+              .then((data) => {
+                _("#user-black-rating").iText(`(${data.rating})`);
+              })
+
+            postData('/app-api/get-user-ratings', { user: opponent })
+              .then((data) => {
+                _("#user-white-rating").iText(`(${data.rating})`);
+              })
+          }
+          else {
+            console.log("AM BLACK")
+            _("#user-white-name").iText(usernameNoId)
+            _("#user-black-name").iText(opponent)
+
+            postData('/app-api/get-user-ratings', { user: opponent })
+              .then((data) => {
+                _("#user-black-rating").iText(`(${data.rating})`);
+              })
+
+            postData('/app-api/get-user-ratings', { user: usernameNoId })
+              .then((data) => {
+                _("#user-white-rating").iText(`(${data.rating})`);
+              })
+          }
+
+          _("#gt-value").iText(match.turn)
+
+
+
+          setTimeout(() => _(".loading-text").innerHTML = `<p>Connected to room...</p>`, 300)
+
         })
         .catch(err => {
           alert(err);
@@ -220,10 +256,10 @@ _("#chatbox").addEventListener("keydown", (e) => {
   }
 })
 
-var minYou = 4;
+var minYou = 9;
 var secYou = 59;
 
-var minThem = 4;
+var minThem = 9;
 var secThem = 59;
 
 function incrimentTime() {
