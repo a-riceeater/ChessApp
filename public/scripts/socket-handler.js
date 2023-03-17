@@ -25,6 +25,13 @@ async function $src(callback) {
 function $rm() {
 socket.on("recieve-move", (data) => {
   var deletedPiece;
+
+  _(".movedFrom", true).forEach(ele => ele.classList.remove("movedFrom"));
+  _(".movedTo", true).forEach(ele => ele.classList.remove("movedTo"));
+
+  document.getElementById(data.moveTo).classList.add("movedFrom")
+  document.getElementById(data.moving).parentNode.classList.add("movedTo")
+  
   console.log(document.getElementById(data.moveTo), document.getElementById(data.moving));
   document.getElementById(data.moveTo).childNodes.forEach((ele) => {
     console.log(ele);
