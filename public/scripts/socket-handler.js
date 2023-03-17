@@ -30,9 +30,9 @@ socket.on("recieve-move", (data) => {
   _(".movedTo", true).forEach(ele => ele.classList.remove("movedTo"));
 
   document.getElementById(data.moveTo).classList.add("movedFrom")
-  document.getElementById(data.moving).parentNode.classList.add("movedTo")
+  document.querySelector(`[data=${data.moving}]`).parentNode.classList.add("movedTo")
   
-  console.log(document.getElementById(data.moveTo), document.getElementById(data.moving));
+  console.log(document.getElementById(data.moveTo), document.querySelector(`[data=${data.moving}]`), "is check: " + data.inCheck);
   document.getElementById(data.moveTo).childNodes.forEach((ele) => {
     console.log(ele);
     if (!ele) return;
@@ -44,7 +44,7 @@ socket.on("recieve-move", (data) => {
       deletedPiece = true;
     }
   })
-  document.getElementById(data.moveTo).appendChild(document.getElementById(data.moving))
+  document.getElementById(data.moveTo).appendChild(document.querySelector(`[data=${data.moving}]`))
   match = data.match;
   _("#gt-value").iText(match.turn)
   if (!deletedPiece) {
@@ -55,6 +55,7 @@ socket.on("recieve-move", (data) => {
   }
 
   if (data.inCheck) {
+    _(".red", true).forEach(ele => ele.classList.remove("red"));
     // K = WHITE
     // k == BLACK
     if (data.whoMoved == usernameNoId) {

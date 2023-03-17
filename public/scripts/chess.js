@@ -166,7 +166,7 @@ document.querySelectorAll(".piece").forEach(ele => {
 
       if (selectedPiece && !ele.getAttribute("src").includes("color")) {
         if (selectedPiece.classList.contains("square")) return;
-        postData('/app-api/move', { user: usernameNoId, room: sessionStorage.getItem("gameId"), moveTo: ele.parentNode.id, moving: selectedPiece.id, c: color, to: ele.parentNode.id, from: selectedPiece.parentNode.id, to: ele.parentNode.id })
+        postData('/app-api/move', { user: usernameNoId, room: sessionStorage.getItem("gameId"), moveTo: ele.parentNode.id, moving: selectedPiece.getAttribute("id"), c: color, to: ele.parentNode.id, from: selectedPiece.parentNode.id, to: ele.parentNode.id })
           .then((data) => {
             selectedPiece.classList.remove("selected")
             selectedPiece = null;
@@ -194,7 +194,7 @@ document.querySelectorAll(".piece").forEach(ele => {
 
       console.log(color)
       if (selectedPiece.classList.contains("square")) return;
-      postData('/app-api/move', { user: usernameNoId, room: sessionStorage.getItem("gameId"), moveTo: ele.id, moving: selectedPiece.id, c: color, to: ele.id, from: selectedPiece.parentNode.id, to: ele.parentNode.id })
+      postData('/app-api/move', { user: usernameNoId, room: sessionStorage.getItem("gameId"), moveTo: ele.id, moving: selectedPiece.getAttribute("id"), c: color, to: ele.id, from: selectedPiece.parentNode.id, to: ele.parentNode.id })
         .then((data) => {
           selectedPiece.classList.remove("selected")
           selectedPiece = null;
@@ -228,7 +228,7 @@ document.querySelectorAll(".square").forEach(ele => {
       console.log(color, selectedPiece.parentNode.id, ele.id)
 
       if (selectedPiece.classList.contains("square")) return;
-      postData('/app-api/move', { user: usernameNoId, room: sessionStorage.getItem("gameId"), moveTo: ele.id, moving: selectedPiece.id, c: color, to: ele.id, from: selectedPiece.parentNode.id, to: ele.id })
+      postData('/app-api/move', { user: usernameNoId, room: sessionStorage.getItem("gameId"), moveTo: ele.id, moving: selectedPiece.getAttribute("id"), c: color, to: ele.id, from: selectedPiece.parentNode.id, to: ele.id })
         .then((data) => {
           console.dir(data);
           if (data.notAllUsersConnected) {
@@ -364,7 +364,7 @@ document.addEventListener("mouseup", (e) => {
   if (!square.classList.contains("square")) return
 
   if (match.turn == usernameNoId) {
-    postData('/app-api/move', { user: usernameNoId, room: sessionStorage.getItem("gameId"), moveTo: square.id, moving: movePiece.id, c: color, to: square.id, from: movePiece.parentNode.id, to: square.id })
+    postData('/app-api/move', { user: usernameNoId, room: sessionStorage.getItem("gameId"), moveTo: square.id, moving: movePiece.getAttribute("data"), c: color, to: square.id, from: movePiece.parentNode.id, to: square.id })
       .then((data) => {
         selectedPiece.classList.remove("selected")
         selectedPiece = null;

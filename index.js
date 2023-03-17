@@ -16,7 +16,6 @@ const io = new Server(server, { 'force new connection': true });
 import favicon from 'serve-favicon';
 import rateLimit from 'express-rate-limit'
 //const helmet = require("helmet"); Use this if you want sequirty response headers (may cause bugs with code)
-const port = process.env.portAbove; // Change this to proccess.env.portAbove if experiencing errors
 // const prompt = require('prompt-sync')({ sigint: true });
 import fs from "fs"
 import sqlite3 from "sqlite3"
@@ -103,6 +102,7 @@ var queueUsers = [];
 const sockets = [];
 const rooms = [];
 const playing = [];
+var online = 0;
 
 app.use(cors(corsOptions));
 app.use(express.static("public"))
@@ -179,7 +179,7 @@ app.get("/app-api/get-site-analysis", authenticateToken, (req, res) => {
     if (err) throw err;
     fs.writeFile('./siteVisits.txt', (parseInt(data) + 1).toString(), (err) => {
       if (err) throw err;
-      res.send({ online: 1, siteVisits: parseInt(data) })
+      res.send({ online: online, siteVisits: parseInt(data) })
     })
   })
 })
@@ -349,6 +349,7 @@ app.post("/app-api/resign-game", authenticateToken, (req, res) => {
   io.to(rooms[res.user]).emit("game-resign", { user: res.user });
 })
 
+const port = process.env.port; // Change this to proccess.env.portAbove if experiencing errors
 server.listen(port, () => {
   console.log("\x1b[33mServer Running!")
   console.log("\x1b[31mThis is a development server, do not use this for hosting!\n")
@@ -362,10 +363,12 @@ io.on("connection", (socket) => {
     console.log("Established WSS connection " + socket.id + " " + data.username)
     sockets[data.username] = socket.id;
     socket.emit("connection-established", {})
+    online++;
   })
 
   socket.on("disconnect", () => {
     var user;
+    if (online != 0) online--;
     Object.getOwnPropertyNames(sockets).forEach((key) => {
       if (sockets[key] == socket.id) {
         if (playing.includes(key)) {
@@ -388,6 +391,7 @@ io.on("connection", (socket) => {
 
     if (queueUsers.includes(user)) {
       delete queueUsers[user];
+      console.log("Qeueue users disconnected. New length: " + arrayLength(queueUsers));
       io.emit("update_queue", { amount: arrayLength(queueUsers) });
     }
 
