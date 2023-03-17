@@ -14,7 +14,7 @@ async function connectToServer() {
       document.body.innerHTML = ws.readyState;
       if (ws.readyState === 1) {
         clearInterval(timer)
-        ws["on"] = function(name, callback) {
+        ws["on"] = function (name, callback) {
           ons.set(name, callback);
         }
         resolve(ws);
@@ -53,6 +53,20 @@ socket.on("update_queue", (data) => {
   _("#queue-amt").iText(data.amount + " users in queue")
 })
 
+socket.on("connection-established", () => {
+
+  if (document.URL.includes("?")) {
+    if (document.URL.split("?")[1] == "q=1") {
+      setTimeout(() => _("#join-queue-btn").click(), 500);
+    }
+  }
+
+  if (sessionStorage.getItem("q") == 1) {
+    sessionStorage.removeItem("q")
+    setTimeout(() => _("#join-queue-btn").click(), 500);
+  }
+})
+
 socket.on("join_game", (data) => {
   const gameId = data.gameId;
   sessionStorage.setItem("gameId", gameId)
@@ -66,6 +80,12 @@ fetch('/app-api/get-queue-members', { headers: { 'Content-Type': 'application/js
 fetch('/app-api/get-rating', { headers: { 'Content-Type': 'application/json' } })
   .then((data) => { return data.json(); })
   .then((data) => _("#pc-username").innerText += " (" + data.rating + ")")
+
+fetch('/app-api/get-site-analysis', { headers: { 'Content-Type': 'application/json' } })
+  .then((data) => { return data.json(); })
+  .then((data) => {
+    _("#totalOnline").iText(`${data.online} users currently online - ${data.siteVisits} total site visits.`)
+  })
 
 _("#reset").addEventListener("click", (e) => {
   const p = confirm("This will reset your data. Are you sure?")
@@ -146,17 +166,6 @@ async function postData(url = '', body = {}) {
       document.body.style.background = "white";
     })
   return response.json();
-}
-
-if (document.URL.includes("?")) {
-  if (document.URL.split("?")[1] == "q=1") {
-    setTimeout(() => _("#join-queue-btn").click(), 500);
-  }
-}
-
-if (sessionStorage.getItem("q") == 1) {
-  sessionStorage.removeItem("q")
-  setTimeout(() => _("#join-queue-btn").click(), 500);
 }
 
 window.addEventListener("error", (e) => {

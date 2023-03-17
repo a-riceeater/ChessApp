@@ -60,33 +60,34 @@ socket.on("recieve-move", (data) => {
     if (data.whoMoved == usernameNoId) {
       // If you put them into check
       if (color == "white") { 
-        _("#k").style.background = "red"; 
+        _("#k").parentNode.classList.add("red")
         setTimeout(() => {
-          if (!data.isCM) _("#k").style.background = "transparent"
+          if (!data.isCM) _("#k").parentNode.classList.remove("red")
         }, 2500)
       }
       else {
-        _("#K").style.background = "red" 
+        _("#K").parentNode.classList.add("red")
         setTimeout(() => {
-          if (!data.isCM) _("#K").style.background = "transparent"
+          if (!data.isCM) _("#K").parentNode.classList.remove("red")
         }, 2500) 
       }
     } 
     else {
       // If they put you into check
       if (color == "white") { 
-        _("#K").style.background = "red"; 
+        _("#K").parentNode.classList.add("red")
         setTimeout(() => {
-          if (!data.isCM) _("#K").style.background = "transparent"
+          if (!data.isCM) _("#K").parentNode.classList.remove("red")
         }, 2500) }
       else { 
-        _("#k").style.background = "red";
+        _("#k").parentNode.classList.add("red")
         setTimeout(() => {
-          if (!data.isCM) _("#k").style.background = "transparent"
+          if (!data.isCM) _("#k").parentNode.classList.remove("red")
         }, 2500) 
       }
     }
   }
+  executePremove();
 })
 }
 

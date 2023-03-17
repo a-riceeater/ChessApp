@@ -155,7 +155,8 @@ app.post("/app-api/join-queue", authenticateToken, (req, res) => {
       console.dir(data);
       const match = new Match(id, queueUsers, queueUsers[0], queueUsers[1], data.win, data.draw, data.lose);
       console.log(match);
-      matches.set(queueUsers, match)
+      matches.set(queueUsers[0], match)
+      matches.set(queueUsers[1], match)
       matches.set(id, match);
       queueUsers = [];
     })
@@ -171,6 +172,16 @@ app.get("/app-api/get-queue-members", (req, res) => {
 
 app.get("/play/:id", authenticateToken, (req, res) => {
   res.sendFile(rp("html/game.html"))
+})
+
+app.get("/app-api/get-site-analysis", authenticateToken, (req, res) => {
+  fs.readFile("./siteVisits.txt", "utf8", (err, data) => {
+    if (err) throw err;
+    fs.writeFile('./siteVisits.txt', (parseInt(data) + 1).toString(), (err) => {
+      if (err) throw err;
+      res.send({ online: 1, siteVisits: parseInt(data) })
+    })
+  })
 })
 
 app.post("/app-api/connect", (req, res) => {
@@ -324,7 +335,15 @@ app.post("/app-api/game-lose", authenticateToken, (req, res) => {
 })
 
 app.post("/app-api/resign-game", authenticateToken, (req, res) => {
-  // const socket = io.sockets.sockets.get(sockets[res.user]);
+  const match = matches.get(rooms[res.user])
+
+  ratings.changeUser(res.user, match.winAmt, "sub");
+  for (let i = 0; i < match.players.length; i++) {
+    if (match.players[i] != res.user) {
+      ratings.changeUser(match.players[i], match.loseAmt, "add")
+    }
+  }
+
   matches.delete(rooms[res.user])
 
   io.to(rooms[res.user]).emit("game-resign", { user: res.user });
@@ -353,7 +372,15 @@ io.on("connection", (socket) => {
           user = key;
           console.log("MATCH THAT " + key + " IS PLAYING IN HAS DISCONNECTED.")
 
-          // matches.remove()
+          const match = matches.get(user)
+          ratings.changeUser(user, match.winAmt, "sub");
+          for (let i = 0; i < match.players.length; i++) {
+            if (match.players[i] != user) {
+              ratings.changeUser(match.players[i], match.loseAmt, "add")
+            }
+          }
+          io.to(match.id).emit("game-resign", { user: user });
+          matches.delete(matches.get(user).id);
         }
       }
     })
@@ -363,7 +390,7 @@ io.on("connection", (socket) => {
       io.emit("update_queue", { amount: arrayLength(queueUsers) });
     }
 
-    Object.values(sockets).forEach(function(key) {
+    Object.values(sockets).forEach(function (key) {
       if (key == socket.id) {
         console.log("Removing " + key + " from socket array.")
         delete sockets[key]

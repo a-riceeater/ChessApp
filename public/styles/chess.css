@@ -135,6 +135,7 @@
     font-weight: bold;
     color: white;
     text-shadow: 1px 1px #000;
+    transition: .5s;
 }
 
 /* Alternate between black and white squares */
@@ -150,7 +151,6 @@
 
 .piece {
     cursor: pointer;
-    transition: .5s;
 }
 
 .cursor {
@@ -179,7 +179,7 @@
     height: 100%;
     background-color: #ffffff;
     z-index: 9999;
-    display: flex;
+    display: none;
     /* flex */
     flex-direction: column;
     justify-content: center;
@@ -239,13 +239,17 @@
     }
 }
 
-#uuid {
+#totalOnline {
     position: absolute;
     bottom: 0.5%;
     right: 0.5%;
     font-family: var(--m);
     color: #666666;
     font-size: 13.5px;
+}
+
+.red {
+    background-color: red !important;
 }
 
 .gameCheckmate, .gameDraw {
@@ -362,4 +366,10 @@
 
 .movedTo {
   background: rgb(250, 250, 0, 0.35) !important;
+}
+
+.moving {
+    position: fixed;
+    z-index: 999;
+    transition: none !important;
 }

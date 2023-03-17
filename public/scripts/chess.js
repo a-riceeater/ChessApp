@@ -1,4 +1,4 @@
-var selectedPiece, opponent;
+var selectedPiece, opponent, pmSelect, pmTo;
 const columns = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
 
 
@@ -18,7 +18,12 @@ const username = localStorage.getItem("username")
 var usernameNoId;
 if (username) usernameNoId = username;
 
-_("#uuid").iText(username.split(".")[1])
+fetch('/app-api/get-site-analysis', { headers: { 'Content-Type': 'application/json' } })
+  .then((data) => { return data.json(); })
+  .then((data) => {
+    _("#totalOnline").iText(`${data.online} users currently online - ${data.siteVisits} total site visits.`)
+  })
+
 try {
   $src(() => {
     socket.on("connection-established", () => {
@@ -154,78 +159,92 @@ try {
 
 setTimeout(() => _(".loading-text").innerHTML = `<p>Establishing Functions...</p>`, 1000)
 document.querySelectorAll(".piece").forEach(ele => {
+
   ele.addEventListener("click", (e) => {
+    if (match.turn == usernameNoId) {
+      if (!selectedPiece && !ele.getAttribute("src").includes(color)) return;
 
+      if (selectedPiece && !ele.getAttribute("src").includes("color")) {
+        if (selectedPiece.classList.contains("square")) return;
+        postData('/app-api/move', { user: usernameNoId, room: sessionStorage.getItem("gameId"), moveTo: ele.parentNode.id, moving: selectedPiece.id, c: color, to: ele.parentNode.id, from: selectedPiece.parentNode.id, to: ele.parentNode.id })
+          .then((data) => {
+            selectedPiece.classList.remove("selected")
+            selectedPiece = null;
+            if (data.notAllUsersConnected) {
+              alert("Not all users have connected yet. Please try again.")
+            }
+          })
+        return;
+      }
 
-    if (!selectedPiece && !ele.getAttribute("src").includes(color)) return;
-    if (selectedPiece && !ele.getAttribute("src").includes("color")) {
-      postData('/app-api/move', { user: usernameNoId, room: sessionStorage.getItem("gameId"), moveTo: ele.parentNode.id, moving: selectedPiece.id, c: color, to: ele.parentNode.id, from: selectedPiece.parentNode.id, to: ele.parentNode.id })
+      _(".piece", true).forEach(ele2 => {
+        if (ele != ele2) ele2.classList.remove("selected")
+      })
+
+      selectedPiece = ele;
+      ele.classList.toggle("selected");
+
+      if (ele == selectedPiece) return;
+
+      console.log(selectedPiece.getAttribute("src"), ele.getAttribute("src"))
+
+      // Checks if clicking on own piece
+      if (selectedPiece.getAttribute("src").includes("black") && ele.getAttribute("src").includes("black")) { _(".piece", true).forEach(ele2 => ele2.classList.remove("selected")); selectedPiece = null; return; }
+      if (selectedPiece.getAttribute("src").includes("white") && ele.getAttribute("src").includes("white")) { _(".piece", true).forEach(ele2 => ele2.classList.remove("selected")); selectedPiece = null; return; }
+
+      console.log(color)
+      if (selectedPiece.classList.contains("square")) return;
+      postData('/app-api/move', { user: usernameNoId, room: sessionStorage.getItem("gameId"), moveTo: ele.id, moving: selectedPiece.id, c: color, to: ele.id, from: selectedPiece.parentNode.id, to: ele.parentNode.id })
         .then((data) => {
           selectedPiece.classList.remove("selected")
           selectedPiece = null;
-          if (data.notAllUsersConnected) {
-            alert("Not all users have connected yet. Please try again.")
-          }
         })
-      return;
     }
-
-    _(".piece", true).forEach(ele2 => {
-      if (ele != ele2) ele2.classList.remove("selected")
-    })
-
-    selectedPiece = ele;
-    ele.classList.toggle("selected");
-
-    if (match.turn != usernameNoId) return;
-    if (ele == selectedPiece) return;
-
-    console.log(selectedPiece.getAttribute("src"), ele.getAttribute("src"))
-
-    // Checks if clicking on own piece
-    if (selectedPiece.getAttribute("src").includes("black") && ele.getAttribute("src").includes("black")) { _(".piece", true).forEach(ele2 => ele2.classList.remove("selected")); selectedPiece = null; return; }
-    if (selectedPiece.getAttribute("src").includes("white") && ele.getAttribute("src").includes("white")) { _(".piece", true).forEach(ele2 => ele2.classList.remove("selected")); selectedPiece = null; return; }
-
-    console.log(color)
-
-    postData('/app-api/move', { user: usernameNoId, room: sessionStorage.getItem("gameId"), moveTo: ele.id, moving: selectedPiece.id, c: color, to: ele.id, from: selectedPiece.parentNode.id, to: ele.parentNode.id })
-      .then((data) => {
-        selectedPiece.classList.remove("selected")
-        selectedPiece = null;
-      })
+    else {
+      pmSelect = selectedPiece;
+      pmTo = ele.parentNode;
+    }
   })
 })
 
 document.querySelectorAll(".square").forEach(ele => {
   ele.addEventListener("click", (e) => {
     if (!selectedPiece) return;
-    if (match.turn != usernameNoId) return;
-    if (selectedPiece == ele) return;
-    if (e.target.classList.contains("piece")) return;
+    if (match.turn == usernameNoId) {
+      if (selectedPiece == ele) return;
+      if (e.target.classList.contains("piece")) return;
 
 
-    ele.childNodes.forEach(ele3 => {
-      if (!ele3) return;
-      if (ele3.classList.contains("piece")) {
+      ele.childNodes.forEach(ele3 => {
+        if (!ele3) return;
+        if (ele3.classList.contains("piece")) {
 
-        // Checks if clicking on own piece
-        if (selectedPiece.getAttribute("src").includes("black") && ele3.getAttribute("src").includes("black")) { _(".piece", true).forEach(ele2 => ele2.classList.remove("selected")); selectedPiece = null; return; }
-        if (selectedPiece.getAttribute("src").includes("white") && ele3.getAttribute("src").includes("white")) { _(".piece", true).forEach(ele2 => ele2.classList.remove("selected")); selectedPiece = null; return; }
-      }
-    })
-
-    console.log(color, selectedPiece.parentNode.id, ele.id)
-    postData('/app-api/move', { user: usernameNoId, room: sessionStorage.getItem("gameId"), moveTo: ele.id, moving: selectedPiece.id, c: color, to: ele.id, from: selectedPiece.parentNode.id, to: ele.id })
-      .then((data) => {
-        console.dir(data);
-        if (data.notAllUsersConnected) {
-          alert("Not all users have connected yet. Please try again.")
+          // Checks if clicking on own piece
+          if (selectedPiece.getAttribute("src").includes("black") && ele3.getAttribute("src").includes("black")) { _(".piece", true).forEach(ele2 => ele2.classList.remove("selected")); selectedPiece = null; return; }
+          if (selectedPiece.getAttribute("src").includes("white") && ele3.getAttribute("src").includes("white")) { _(".piece", true).forEach(ele2 => ele2.classList.remove("selected")); selectedPiece = null; return; }
         }
-        if (!data.moved) return;
-        selectedPiece.classList.remove("selected")
-        selectedPiece = null;
       })
-    e.stopPropagation();
+
+      console.log(color, selectedPiece.parentNode.id, ele.id)
+
+      if (selectedPiece.classList.contains("square")) return;
+      postData('/app-api/move', { user: usernameNoId, room: sessionStorage.getItem("gameId"), moveTo: ele.id, moving: selectedPiece.id, c: color, to: ele.id, from: selectedPiece.parentNode.id, to: ele.id })
+        .then((data) => {
+          console.dir(data);
+          if (data.notAllUsersConnected) {
+            alert("Not all users have connected yet. Please try again.")
+          }
+          if (!data.moved) return;
+          selectedPiece.classList.remove("selected")
+          selectedPiece = null;
+        })
+      e.stopPropagation();
+    }
+    else {
+      console.log(selectedPiece)
+      pmSelect = selectedPiece;
+      pmTo = ele.parentNode;
+    }
   })
 })
 
@@ -264,8 +283,9 @@ var minThem = 9;
 var secThem = 59;
 
 function incrimentTime() {
+  if (gameEnded) return;
   setTimeout(() => {
-    console.log(match.turn)
+    if (gameEnded) return;
     if (match.turn == usernameNoId) {
       if (secYou == 0) {
         minYou--;
@@ -318,6 +338,60 @@ _("#resign-btn").addEventListener("click", () => {
       })
   }
 })
+
+var mouseDown = false;
+var movePiece;
+_(".piece", true).forEach((piece) => {
+  piece.addEventListener("mousedown", (e) => {
+    e.preventDefault();
+    piece.classList.add("moving");
+    movePiece = piece;
+    mouseDown = true;
+  })
+})
+
+document.addEventListener("mouseup", (e) => {
+  if (!mouseDown) return;
+  e.preventDefault();
+  movePiece.classList.remove("moving");
+  mouseDown = false;
+
+  var square = document.elementFromPoint(event.clientX, event.clientY);
+
+  if (square.classList.contains("piece")) square = square.parentNode;
+
+  if (!square.classList.contains("square")) return
+
+  if (match.turn == usernameNoId) {
+    postData('/app-api/move', { user: usernameNoId, room: sessionStorage.getItem("gameId"), moveTo: square.id, moving: movePiece.id, c: color, to: square.id, from: movePiece.parentNode.id, to: square.id })
+      .then((data) => {
+        selectedPiece.classList.remove("selected")
+        selectedPiece = null;
+        if (data.notAllUsersConnected) {
+          alert("Not all users have connected yet. Please try again.")
+        }
+      })
+  }
+
+  console.log(square);
+  movePiece = null;
+})
+
+
+document.addEventListener("mousemove", (e) => {
+  if (!mouseDown) return;
+
+  // Subtraction to set cursor to middle of element, rather than top left.
+  let left = e.pageX - 32;
+  let top = e.pageY - 25;
+
+  movePiece.style.left = left + "px";
+  movePiece.style.top = top + "px"
+})
+
+function executePremove() {
+  console.log("EXECUTING PREMOVE", pmSelect, pmTo)
+}
 
 setTimeout(() => {
   _("#loading-screen").css("opacity", 0);
