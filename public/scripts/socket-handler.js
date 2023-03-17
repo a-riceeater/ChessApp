@@ -17,10 +17,12 @@ var socket = io();
   });
 }*/
 
+
 async function $src(callback) {
   callback()
 }
 
+function $rm() {
 socket.on("recieve-move", (data) => {
   var deletedPiece;
   console.log(document.getElementById(data.moveTo), document.getElementById(data.moving));
@@ -44,7 +46,42 @@ socket.on("recieve-move", (data) => {
     const audio = new Audio(`/sounds/place${playIndex}.wav`);
     audio.play();
   }
+
+  if (data.inCheck) {
+    // K = WHITE
+    // k == BLACK
+    if (data.whoMoved == usernameNoId) {
+      // If you put them into check
+      if (color == "white") { 
+        _("#k").style.background = "red"; 
+        setTimeout(() => {
+          if (!data.isCM) _("#k").style.background = "transparent"
+        }, 2500)
+      }
+      else {
+        _("#K").style.background = "red" 
+        setTimeout(() => {
+          if (!data.isCM) _("#K").style.background = "transparent"
+        }, 2500) 
+      }
+    } 
+    else {
+      // If they put you into check
+      if (color == "white") { 
+        _("#K").style.background = "red"; 
+        setTimeout(() => {
+          if (!data.isCM) _("#K").style.background = "transparent"
+        }, 2500) }
+      else { 
+        _("#k").style.background = "red";
+        setTimeout(() => {
+          if (!data.isCM) _("#k").style.background = "transparent"
+        }, 2500) 
+      }
+    }
+  }
 })
+}
 
 // Game end because of checkmate
 socket.on("game-win", (data) => {
@@ -66,7 +103,7 @@ socket.on("game-win", (data) => {
 // Game end because of draw, stalemate, etc.
 socket.on("game-end", (data) => {
   console.dir(data);
-  gameEnd = true;
+  gameEnded = true;
   const drawReason = data.reason;
   _(".gameDraw").css("scale", 1);
   _("#shade").css("scale", 1);
@@ -76,7 +113,7 @@ socket.on("game-end", (data) => {
 socket.on("game-loss-time", (data) => {
   console.dir(data);
   const loser = data.loser;
-  gameEnd = true;
+  gameEnded = true;
 
   if (loser == usernameNoId) _("#winslos").iText("You lost!")
   _("#win-reason").iText("By timeout")
@@ -91,16 +128,19 @@ socket.on("game-loss-time", (data) => {
 
   _(".gameCheckmate").css("scale", 1)
   _("#shade").css("scale", 1)
-  
+
 })
 
 socket.on("game-resign", (data) => {
   console.dir(data);
-  gameEnd = true;
+  gameEnded = true;
   const resign = data.user;
 
   if (resign == usernameNoId) _("#winslos").iText("You lost!")
   _("#win-reason").iText("By resign")
+
+  _(".gameCheckmate").css("scale", 1)
+  _("#shade").css("scale", 1)
 })
 
 socket.on("recieve-msg", (data) => {

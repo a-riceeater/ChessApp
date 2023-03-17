@@ -132,6 +132,7 @@ try {
           }
 
           _("#gt-value").iText(match.turn)
+          $rm();
 
 
 

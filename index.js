@@ -224,10 +224,10 @@ app.post("/app-api/move", authenticateToken, (req, res) => {
     moveStatus = true;
   } catch (err) {
     console.error("invalid move! (" + move + ")")
-    console.error(err);
     moveStatus = false;
   }
   finally {
+    console.log(match.board.ascii())
     var gameStatus = false;
 
     winHandler.isWin(match.board, (status, reason) => {
@@ -247,7 +247,7 @@ app.post("/app-api/move", authenticateToken, (req, res) => {
       if (status) matches.delete(room)
       res.send({ moved: moveStatus })
 
-      io.to(room).emit("recieve-move", { moveTo: req.body.moveTo, moving: req.body.moving, match: match, inCheck: match.board.inCheck() });
+      io.to(room).emit("recieve-move", { moveTo: req.body.moveTo, moving: req.body.moving, match: match, inCheck: match.board.inCheck(), whoMoved: res.user, isCM: match.board.isCheckmate() });
       return;
     })
 
@@ -260,7 +260,7 @@ app.post("/app-api/move", authenticateToken, (req, res) => {
       }
     }
 
-    if (moveStatus) io.to(room).emit("recieve-move", { moveTo: req.body.moveTo, moving: req.body.moving, match: match, inCheck: match.board.inCheck() });
+    if (moveStatus) io.to(room).emit("recieve-move", { moveTo: req.body.moveTo, moving: req.body.moving, match: match, inCheck: match.board.inCheck(), whoMoved: res.user, isCM: match.board.isCheckmate() });
 
     if (!gameStatus) res.send({ moved: moveStatus })
   }
@@ -325,7 +325,7 @@ app.post("/app-api/game-lose", authenticateToken, (req, res) => {
 
 app.post("/app-api/resign-game", authenticateToken, (req, res) => {
   // const socket = io.sockets.sockets.get(sockets[res.user]);
-  const match = matches.get(rooms[res.user])
+  matches.delete(rooms[res.user])
 
   io.to(rooms[res.user]).emit("game-resign", { user: res.user });
 })
