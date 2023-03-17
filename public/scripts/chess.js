@@ -1,7 +1,3 @@
-window.addEventListener("error", (e) => {
-  alert(e.message)
-})
-
 var selectedPiece, opponent;
 const columns = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
 
@@ -67,21 +63,21 @@ try {
     squares[j].setAttribute('id', id);
   }
 }*/
-        const chessboardRows = document.querySelectorAll(isBlackOnBottom ? "#chessboard-black > .row" : "#chessboard-white > .row")
+            const chessboardRows = document.querySelectorAll(isBlackOnBottom ? "#chessboard-black > .row" : "#chessboard-white > .row")
 
             for (let i = 0; i < chessboardRows.length; i++) {
-  const squares = chessboardRows[i].querySelectorAll('.square');
-  const row = isBlackOnBottom ? i + 1 : 8 - i;
+              const squares = chessboardRows[i].querySelectorAll('.square');
+              const row = isBlackOnBottom ? i + 1 : 8 - i;
 
-  // Loop through each square in the row
-  for (let j = 0; j < squares.length; j++) {
-    const column = columns[j];
-    const id = column + row;
+              // Loop through each square in the row
+              for (let j = 0; j < squares.length; j++) {
+                const column = columns[j];
+                const id = column + row;
 
-    // Set the id of the square to its location on the chessboard
-    squares[j].setAttribute('id', id);
-  }
-}
+                // Set the id of the square to its location on the chessboard
+                squares[j].setAttribute('id', id);
+              }
+            }
             for (let i = 0; i < match.players.length; i++) {
               if (match.players[i] == usernameNoId) continue;
               opponent = match.players[i];
@@ -107,12 +103,14 @@ try {
 
             postData('/app-api/get-user-ratings', { user: usernameNoId })
               .then((data) => {
-                _("#user-black-rating").iText(`(${data.rating})`);
+                _("#user-white-rating").iText(`(${data.rating})`);
+                _("#user-white-rating").setAttribute("data", usernameNoId)
               })
 
             postData('/app-api/get-user-ratings', { user: opponent })
               .then((data) => {
-                _("#user-white-rating").iText(`(${data.rating})`);
+                _("#user-black-rating").iText(`(${data.rating})`);
+                _("#user-black-rating").setAttribute("data", opponent)
               })
           }
           else {
@@ -123,11 +121,13 @@ try {
             postData('/app-api/get-user-ratings', { user: opponent })
               .then((data) => {
                 _("#user-black-rating").iText(`(${data.rating})`);
+                _("#user-black-rating").setAttribute("data", opponent)
               })
 
             postData('/app-api/get-user-ratings', { user: usernameNoId })
               .then((data) => {
                 _("#user-white-rating").iText(`(${data.rating})`);
+                _("#user-white-rating").setAttribute("data", usernameNoId)
               })
           }
 
@@ -264,6 +264,7 @@ var secThem = 59;
 
 function incrimentTime() {
   setTimeout(() => {
+    console.log(match.turn)
     if (match.turn == usernameNoId) {
       if (secYou == 0) {
         minYou--;
@@ -273,8 +274,7 @@ function incrimentTime() {
         secYou--;
       }
 
-      if (color == "black") _("#user-black-time").iText(`${minYou}:${secYou.toString().length == 1 ? "0" + secYou : secYou}`)
-      if (color == "white") _("#user-white-time").iText(`${minYou}:${secYou.toString().length == 1 ? "0" + secYou : secYou}`)
+      _("#user-white-time").iText(`${minYou}:${secYou.toString().length == 1 ? "0" + secYou : secYou}`)
 
       if (minYou == 0 && secYou == 0) {
         postData('/app-api/game-lose', { time: `${minYou}:${secYou.toString().length == 1 ? "0" + secYou : secYou}` })
@@ -294,20 +294,16 @@ function incrimentTime() {
         secThem--;
       }
 
-      if (color == "black") _("#user-white-time").iText(`${minThem}:${secThem.toString().length == 1 ? "0" + secThem : secThem}`)
-      if (color == "white") _("#user-black-time").iText(`${minThem}:${secThem.toString().length == 1 ? "0" + secThem : secThem}`)
+      _("#user-black-time").iText(`${minThem}:${secThem.toString().length == 1 ? "0" + secThem : secThem}`)
     }
 
     if (match.turn == usernameNoId) {
-      if (color == "black") _("#user-black-time").classList.add("timing")
-      else _("#user-white-time").classList.add("timing")
-
-      if (color == "black") _("#user-white-time").classList.remove("timing");
-      if (color == "white") _("#user-black-time").classList.remove("timing")
+      _("#user-white-time").classList.add("timing")
+      _("#user-black-time").classList.remove("timing")
     }
     else {
-      if (color == "black") { _("#user-black-time").classList.remove("timing"); _("#user-white-time").classList.add("timing") }
-      else { _("#user-white-time").classList.remove("timing"); _("#user-black-time").classList.add("timing") }
+      _("#user-white-time").classList.remove("timing")
+      _("#user-black-time").classList.add("timing");
     }
     incrimentTime();
   }, 1000)
