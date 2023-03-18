@@ -19,7 +19,7 @@
     <div class="chessboard" id="chessboard-white">
         <div class="row">
             <div class="square white"><img src="../images/rook-black.png" data="r1" class="piece"></div>
-            <div class="square wood-brown"><img src="../images/knight-black.png" id="n1" class="piece"></div>
+            <div class="square wood-brown"><img src="../images/knight-black.png" data="n1" class="piece"></div>
             <div class="square white"><img src="../images/bishop-black.png" data="b1" class="piece"></div>
             <div class="square white"><img src="../images/queen-black.png" data="q" class="piece"></div>
             <div class="square wood-brown"><img src="../images/king-black.png" data="k" class="piece"></div>
@@ -91,7 +91,7 @@
         </div>
         <div class="row">
             <div class="square white"><img src="../images/rook-white.png" class="piece" data="R1"></div>
-            <div class="square wood-brown"><img src="../images/knight-white.png" class="piece" id="N1"></div>
+            <div class="square wood-brown"><img src="../images/knight-white.png" class="piece" data="N1"></div>
             <div class="square white"><img src="../images/bishop-white.png" class="piece" data="B1"></div>
             <div class="square white"><img src="../images/queen-white.png" class="piece" data="Q"></div>
             <div class="square wood-brown"><img src="../images/king-white.png" class="piece" data="K"></div>
@@ -198,6 +198,8 @@
 
 
     <div class="info">
+        <a href="/?q=1" onclick="sessionStorage.setItem('q', '1')" id="newGameLink" style="color: white; display: none">New Game</a>
+        <br>
         <a href="#" id="resign-btn" style="color: white;">Resign</a>
         <h1 id="game-turn">Turn:</h1>
         <p id="gt-value" style="color: rgb(207, 207, 207)">Fetching game turn...</p>

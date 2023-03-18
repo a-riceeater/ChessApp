@@ -29,10 +29,11 @@ socket.on("recieve-move", (data) => {
   _(".movedFrom", true).forEach(ele => ele.classList.remove("movedFrom"));
   _(".movedTo", true).forEach(ele => ele.classList.remove("movedTo"));
 
+  console.log(document.getElementById(data.moveTo), document.querySelector(`[data=${data.moving}]`));
+
   document.getElementById(data.moveTo).classList.add("movedFrom")
   document.querySelector(`[data=${data.moving}]`).parentNode.classList.add("movedTo")
   
-  console.log(document.getElementById(data.moveTo), document.querySelector(`[data=${data.moving}]`), "is check: " + data.inCheck);
   document.getElementById(data.moveTo).childNodes.forEach((ele) => {
     console.log(ele);
     if (!ele) return;
@@ -61,29 +62,29 @@ socket.on("recieve-move", (data) => {
     if (data.whoMoved == usernameNoId) {
       // If you put them into check
       if (color == "white") { 
-        _("#k").parentNode.classList.add("red")
+        document.querySelector("[data=k]").parentNode.classList.add("red")
         setTimeout(() => {
-          if (!data.isCM) _("#k").parentNode.classList.remove("red")
+          if (!data.isCM) document.querySelector("[data=k]").parentNode.classList.remove("red")
         }, 2500)
       }
       else {
-        _("#K").parentNode.classList.add("red")
+        document.querySelector("[data=K]").parentNode.classList.add("red")
         setTimeout(() => {
-          if (!data.isCM) _("#K").parentNode.classList.remove("red")
+          if (!data.isCM) document.querySelector("[data=K]").parentNode.classList.remove("red")
         }, 2500) 
       }
     } 
     else {
       // If they put you into check
       if (color == "white") { 
-        _("#K").parentNode.classList.add("red")
+        document.querySelector("[data=K]").parentNode.classList.add("red")
         setTimeout(() => {
-          if (!data.isCM) _("#K").parentNode.classList.remove("red")
+          if (!data.isCM) document.querySelector("[data=K]").parentNode.classList.remove("red")
         }, 2500) }
       else { 
-        _("#k").parentNode.classList.add("red")
+        document.querySelector("[data=k]").parentNode.classList.add("red")
         setTimeout(() => {
-          if (!data.isCM) _("#k").parentNode.classList.remove("red")
+          if (!data.isCM) document.querySelector("[data=k]").parentNode.classList.remove("red")
         }, 2500) 
       }
     }
@@ -103,6 +104,7 @@ socket.on("game-win", (data) => {
   _(".gameCheckmate").css("scale", 1)
   _("#shade").css("scale", 1)
   gameEnded = true;
+  _("#newGameLink").show();
 
   /*if (winner == usernameNoId) {
     rating = data.winAmt
@@ -113,16 +115,18 @@ socket.on("game-win", (data) => {
 socket.on("game-end", (data) => {
   console.dir(data);
   gameEnded = true;
+  _("#newGameLink").show();
   const drawReason = data.reason;
   _(".gameDraw").css("scale", 1);
   _("#shade").css("scale", 1);
-  _("#draw-reason").iTet(drawReason);
+  _("#draw-reason").iText(drawReason);
 })
 
 socket.on("game-loss-time", (data) => {
   console.dir(data);
   const loser = data.loser;
   gameEnded = true;
+  _("#newGameLink").show();
 
   if (loser == usernameNoId) _("#winslos").iText("You lost!")
   _("#win-reason").iText("By timeout")
@@ -143,6 +147,7 @@ socket.on("game-loss-time", (data) => {
 socket.on("game-resign", (data) => {
   console.dir(data);
   gameEnded = true;
+  _("#newGameLink").show();
   const resign = data.user;
 
   if (resign == usernameNoId) _("#winslos").iText("You lost!")

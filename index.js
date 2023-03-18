@@ -320,13 +320,14 @@ app.post("/app-api/leave-queue", authenticateToken, (req, res) => {
   res.send({ left: true })
 })
 
-app.post("/app-api/sendMsg", authenticateToken, (req, res) => {
+import pf from './server/profanity-filter.js'
+app.post("/app-api/sendMsg", authenticateToken, async (req, res) => {
   const from = res.user;
-  const content = req.body.content;
-
-  if (content.replaceAll(" ", "") == "") return;
-  io.to(rooms[from]).emit("recieve-msg", { content: content, from: from })
-  res.status(200).send({ sent: true })
+  pf.filterProfanity(req.body.content, (content) => {
+    if (content.replaceAll(" ", "") == "") return;
+    io.to(rooms[from]).emit("recieve-msg", { content: content, from: from })
+    res.status(200).send({ sent: true })
+  });
 })
 
 app.post("/app-api/game-lose", authenticateToken, (req, res) => {

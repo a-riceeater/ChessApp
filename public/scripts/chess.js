@@ -201,8 +201,6 @@ document.querySelectorAll(".piece").forEach(ele => {
         })
     }
     else {
-      pmSelect = selectedPiece;
-      pmTo = ele.parentNode;
     }
   })
 })
@@ -242,8 +240,7 @@ document.querySelectorAll(".square").forEach(ele => {
     }
     else {
       console.log(selectedPiece)
-      pmSelect = selectedPiece;
-      pmTo = ele.parentNode;
+
     }
   })
 })
@@ -372,6 +369,24 @@ document.addEventListener("mouseup", (e) => {
           alert("Not all users have connected yet. Please try again.")
         }
       })
+  } else {
+    if (gameEnded) return;
+    pmSelect = movePiece;
+    pmTo = square;
+
+    if (pmSelect.classList.contains("movedTo")) pmSelect.classList.remove("movedTo")
+    if (pmTo.classList.contains("movedTo")) pmTo.classList.remove("movedTo")
+
+    if (pmSelect.classList.contains("movedFrom")) pmSelect.classList.remove("movedFrom")
+    if (pmTo.classList.contains("movedFrom")) pmTo.classList.remove("movedFrom")
+
+
+    console.log("PM: " + pmSelect + " " + pmTo)
+    console.log(movePiece, square)
+
+    _(".red", true).forEach(ele => ele.classList.remove("red"));
+    pmSelect.parentNode.classList.add("red")
+    pmTo.classList.add("red")
   }
 
   console.log(square);
@@ -392,6 +407,26 @@ document.addEventListener("mousemove", (e) => {
 
 function executePremove() {
   console.log("EXECUTING PREMOVE", pmSelect, pmTo)
+
+  if (match.turn != usernameNoId) return;
+  if (!pmSelect || !pmTo) return;
+
+  postData('/app-api/move', { user: usernameNoId, room: sessionStorage.getItem("gameId"), moveTo: pmTo.id, moving: pmSelect.getAttribute("data"), c: color, to: pmTo.id, from: pmSelect.parentNode.id, to: pmTo.id })
+    .then((data) => {
+      try {
+
+        pmSelect.parentNode.classList.remove("red")
+        pmTo.classList.remove("red")
+
+        _(".red", true).forEach(ele => ele.classList.remove("red"))
+
+        selectedPiece.classList.remove("selected")
+        selectedPiece = null;
+        if (data.notAllUsersConnected) {
+          alert("Not all users have connected yet. Please try again.")
+        }
+      } catch (err) { };
+    })
 }
 
 setTimeout(() => {
